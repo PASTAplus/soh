@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+""":Mod: config.py
+
+:Synopsis:
+
+:Author:
+    servilla
+
+:Created:
+    3/16/18
+"""
+
+import logging
+
+
+class Config(object):
+
+    user = 'USER'
+    key_path = 'SSH_PRIVATE_KEY'
+    key_pass = 'SECRET_PASSWORD'
+
+    tests = {
+        'uptime': 1,
+    }
+
+    servers = {
+        'pasta': {'cname': 'pasta.lternet.edu', 'status': 0},
+        'package': {'cname': 'package.lternet.edu', 'status': 0},
+        'audit': {'cname': 'audit.lternet.edu', 'status': 0},
+        'solr': {'cname': 'solr.lternet.edu', 'status': 0},
+        'pasta-s': {'cname': 'pasta-s.lternet.edu', 'status': 0},
+        'package-s': {'cname': 'package-s.lternet.edu', 'status': 0},
+        'audit-s': {'cname': 'audit-s.lternet.edu', 'status': 0},
+        'solr-s': {'cname': 'solr-s.lternet.edu', 'status': 0},
+        'pasta-d': {'cname': 'pasta-d.lternet.edu', 'status': 0},
+        'package-d': {'cname': 'package-d.lternet.edu', 'status': 0},
+        'audit-d': {'cname': 'audit-d.lternet.edu', 'status': 0},
+        'solr-d': {'cname': 'solr-d.lternet.edu', 'status': 0},
+        'portal-lter': {'cname': 'portal.lternet.edu', 'status': 0},
+        'portal-s-lter': {'cname': 'portal-s.lternet.edu', 'status': 0},
+        'portal-d-lter': {'cname': 'portal-d.lternet.edu', 'status': 0},
+        'portal-edi': {'cname': 'portal.edirepository.org', 'status': 0},
+        'portal-s-edi': {'cname': 'portal-s.edirepository.org', 'status': 0},
+        'portal-d-edi': {'cname': 'portal-d.edirepository.org', 'status': 0},
+        'gmn-lter': {'cname': 'gmn.lternet.edu', 'status': 0},
+        'gmn-s-lter': {'cname': 'gmn-s.lternet.edu', 'status': 0},
+        'gmn-edi': {'cname': 'gmn.edirepository.org', 'status': 0},
+        'gmn-s-edi': {'cname': 'gmn-s.edirepository.org', 'status': 0},
+        'ldap-edi': {'cname': 'ldap.edirepository.org', 'status': 0},
+        'ldap-lter': {'cname': 'ldap.lternet.edu', 'status': 0},
+        'unit-registry': {'cname': 'unit.lternet.edu', 'status': 0},
+        'vocabullary': {'cname': 'vocab.lternet.edu', 'status': 0},
+    }

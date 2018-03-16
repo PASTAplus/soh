@@ -19,6 +19,7 @@ import daiquiri
 from docopt import docopt
 import paramiko
 
+
 daiquiri.setup(level=logging.WARN)
 logger = daiquiri.getLogger('uptime.py: ' + __name__)
 

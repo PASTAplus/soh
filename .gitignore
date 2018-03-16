@@ -102,3 +102,8 @@ ENV/
 
 # IntelliJ
 .idea
+
+# Local project privates
+config.py
+properties.py
+settings.py

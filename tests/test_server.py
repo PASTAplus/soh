@@ -28,7 +28,7 @@ logger = daiquiri.getLogger('test_server.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-host = 'gypsum.lternet.edu'
+host = 'pasta-d.lternet.edu'
 
 
 class TestServer(unittest.TestCase):

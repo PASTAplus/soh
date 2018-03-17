@@ -28,7 +28,7 @@ logger = daiquiri.getLogger('test_server.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-host = 'pasta-d.lternet.edu'
+host = Config.PASTA_D
 
 
 class TestServer(unittest.TestCase):
@@ -40,9 +40,7 @@ class TestServer(unittest.TestCase):
         pass
 
     def test_test_server(self):
-        server = Server(host)
-        server.test_server()
-        status = server.status
+        status = Server.test_server(host=host)
         self.assertEqual(status, Config.UP)
 
 

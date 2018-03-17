@@ -19,7 +19,7 @@ import daiquiri
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + '/soh.log'
-daiquiri.setup(level=logging.INFO,
+daiquiri.setup(level=logging.WARN,
                outputs=(daiquiri.output.File(logfile), 'stdout',))
 logger = daiquiri.getLogger('__init__.py: ' + __name__)
 

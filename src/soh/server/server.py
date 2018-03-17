@@ -17,7 +17,8 @@ import logging
 import daiquiri
 
 from soh.config import Config
-from soh.tests import uptime
+from soh.tests import server
+from soh.tests import jetty
 
 daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('server.py: ' + __name__)
@@ -25,25 +26,35 @@ logger = daiquiri.getLogger('server.py: ' + __name__)
 
 class Server(object):
 
-    def __init__(self, host=None):
-        self._status = 0
-        self._host = host
+    @staticmethod
+    def test_server(host=None):
+        status = Config.UP
+        if Server.server_is_down(host=host):
+            status = status | Config.SERVER_DOWN
+        return status
 
-    def test_server(self):
-        # Test server uptime
-        server_uptime = uptime.check_uptime(host=self._host, user=Config.user,
-                               key_path=Config.key_path,
-                               key_pass=Config.key_pass)
+    @staticmethod
+    def server_is_down(host=None):
+        server_is_down = False
+        server_uptime = server.uptime(host=host, user=Config.USER,
+                                      key_path=Config.KEY_PATH,
+                                      key_pass=Config.KEY_PASS)
         if server_uptime is None:
-            self._status = self._status | Config.tests['uptime']
-
-    @property
-    def status(self):
-        return self._status
-
-def main():
-    return 0
+            server_is_down = True
+        return server_is_down
 
 
-if __name__ == "__main__":
-    main()
+class PastaServer(Server):
+
+    @staticmethod
+    def test_server(host=None):
+        status = Config.UP
+        if PastaServer.jetty_is_down(host=host):
+            status = status | Config.JETTY_DOWN
+            if PastaServer.server_is_down(host=host):
+                status = status | Config.SERVER_DOWN
+        return status
+
+    @staticmethod
+    def jetty_is_down(host=None):
+        return jetty.is_down(host=host)

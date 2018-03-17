@@ -19,8 +19,10 @@ import daiquiri
 from docopt import docopt
 
 from soh.config import Config
+from soh.server.server import Server
+from soh.server.server import PastaServer
 
-daiquiri.setup(level=logging.INFO)
+daiquiri.setup(level=logging.WARN)
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
 
@@ -32,7 +34,7 @@ def main(argv):
         health_check.py all
         health_check.py production [-p | --portal] [-g | --gmn]
         health_check.py staging [-p | --portal] [-g | --gmn]
-        health_check.py development [-p | --portal] [-g | --gmn]
+        health_check.py development [-p | --portal]
         health_check.py -h | --help
 
     Arguments:
@@ -44,24 +46,213 @@ def main(argv):
     Options:
         -h --help       This page
         -p --portal     Include portals in exam
-        -g --gmn        Include GMNs in exam
+        -g --gmn        Include GMNs in exam (only production and staging)
     """
 
     args = docopt(str(main.__doc__))
 
-    servers = []
-
     if args['all']:
-        for server in Config.servers:
-            servers.append(server)
+        host = Config.PASTA
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PASTA_S
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PASTA_D
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_S_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_D_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_S_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PORTAL_D_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.GMN_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.GMN_S_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.GMN_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.GMN_S_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.LDAP_EDI
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.LDAP_LTER
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.UNIT
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.VOCAB
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
     elif args['production']:
-        servers = ['pasta', 'package', 'audit', 'solr']
+        host = Config.PASTA
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
         if args['--portal']:
-            servers.append('portal_lter')
-            servers.append('portal_edi')
+            host = Config.PORTAL_LTER
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+            host = Config.PORTAL_EDI
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
         if args['--gmn']:
-            servers.append('gmn_lter')
-            servers.append('gmn_edi')
+            host = Config.GMN_LTER
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+            host = Config.GMN_EDI
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+    elif args['staging']:
+        host = Config.PASTA_S
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR_S
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        if args['--portal']:
+            host = Config.PORTAL_S_LTER
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+            host = Config.PORTAL_S_EDI
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+        if args['--gmn']:
+            host = Config.GMN_S_LTER
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+            host = Config.GMN_S_EDI
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+    elif args['development']:
+        host = Config.PASTA_D
+        status = PastaServer.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.PACKAGE_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.AUDIT_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        host = Config.SOLR_D
+        status = Server.test_server(host=host)
+        print('{host}: {status}'.format(host=host, status=status))
+
+        if args['--portal']:
+            host = Config.PORTAL_D_LTER
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+            host = Config.PORTAL_D_EDI
+            status = Server.test_server(host=host)
+            print('{host}: {status}'.format(host=host, status=status))
+
+
 
     return 0
 

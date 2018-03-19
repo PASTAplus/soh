@@ -106,6 +106,9 @@ ENV/
 # IntelliJ
 .idea
 
+# Database files
+*.sqlite
+
 # Local project privates
 config.py
 properties.py

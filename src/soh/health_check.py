@@ -144,9 +144,11 @@ def main(argv):
         status = Server.test_server(host=host)
         print('{host}: {status}'.format(host=host, status=status))
 
-        host = Config.LDAP_LTER
-        status = Server.test_server(host=host)
-        print('{host}: {status}'.format(host=host, status=status))
+        # TODO: create special LTERLDAPSERVER test that does not do server
+        # TODO: testing since the PASTA user does not exist on ldap.lternet.edu
+        # host = Config.LDAP_LTER
+        # status = Server.test_server(host=host)
+        # print('{host}: {status}'.format(host=host, status=status))
 
         host = Config.UNIT
         status = Server.test_server(host=host)

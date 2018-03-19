@@ -20,6 +20,7 @@ from docopt import docopt
 import pendulum
 
 from soh.config import Config
+from soh.lock import Lock
 from soh.model.soh_db import SohDb
 from soh.server.server import Server
 from soh.server.server import PastaServer
@@ -28,15 +29,29 @@ daiquiri.setup(level=logging.WARN)
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
 
+def do_check(host=None, server=None, db=None, event_id=None, store=None,
+             quiet=None):
+    now_utc = pendulum.now('UTC')
+    status = server.check_server(host=host)
+    if store:
+        db.insert_soh_status(event_id=event_id, server=host, status=str(status),
+                             timestamp=now_utc)
+    if not quiet:
+        print('{host}: {status}'.format(host=host, status=status))
+
+
 def main(argv):
     """
     Performs state of health checks against EDI servers/services.
 
     Usage:
-        health_check.py all
-        health_check.py production [-p | --portal] [-g | --gmn]
-        health_check.py staging [-p | --portal] [-g | --gmn]
-        health_check.py development [-p | --portal]
+        health_check.py all [-s | --store] [-q | --quiet]
+        health_check.py production [-p | --portal] [-g | --gmn] [-s | --store]
+            [-q | --quiet]
+        health_check.py staging [-p | --portal] [-g | --gmn] [-s | --store]
+            [-q | --quiet]
+        health_check.py development [-p | --portal] [-s | --store]
+            [-q | --quiet]
         health_check.py -h | --help
 
     Arguments:
@@ -49,368 +64,252 @@ def main(argv):
         -h --help       This page
         -p --portal     Include portals in exam
         -g --gmn        Include GMNs in exam (only production and staging)
+        -s --store      Store results in SOH database
+        -q --quiet      No stdout
     """
     args = docopt(str(main.__doc__))
+
+    lock = Lock('/tmp/poll_manager.lock')
+    if lock.locked:
+        logger.error('Lock file {} exists, exiting...'.format(lock.lock_file))
+        return 1
+    else:
+        lock.acquire()
+        logger.info('Lock file {} acquired'.format(lock.lock_file))
+
+    # Store results in database
+    store = False
+    if args['--store']:
+        store = True
+
+    quiet = False
+    if args['--quiet']:
+        quiet = True
 
     soh_db = SohDb()
     soh_db.connect_soh_db()
 
+    local_tz = pendulum.now().timezone_name
     now_utc = pendulum.now('UTC')
-    soh_db.insert_soh_event(timestamp=now_utc)
-    event_id_query = soh_db.get_soh_latest_event()
 
-    if event_id_query:
-        event_id = event_id_query.event_id
+    event_id = None
+    if store:
+        soh_db.insert_soh_event(timestamp=now_utc)
+        event_id_query = soh_db.get_soh_latest_event()
+        if event_id_query:
+            event_id = event_id_query.event_id
+        else:
+            msg = 'No event identifier found - aborting...'
+            logger.error(msg)
+            lock.release()
+            logger.info('Lock file {} released'.format(lock.lock_file))
+            return 1
 
-        if args['all']:
-            host = Config.PASTA
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+    if args['all']:
+        host = Config.PASTA
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.PACKAGE
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.PACKAGE
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.AUDIT
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.AUDIT
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.SOLR
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.SOLR
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.PASTA_S
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.PASTA_S
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.PACKAGE_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.PACKAGE_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.AUDIT_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.AUDIT_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.SOLR_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.SOLR_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.PASTA_D
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.PASTA_D
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.PACKAGE_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.PACKAGE_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.AUDIT_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.AUDIT_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.SOLR_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.SOLR_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
+        host = Config.PORTAL_LTER
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PORTAL_S_LTER
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PORTAL_D_LTER
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PORTAL_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PORTAL_S_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PORTAL_D_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.GMN_LTER
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.GMN_S_LTER
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.GMN_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.GMN_S_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.LDAP_EDI
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        # TODO: create special LTERLDAPSERVER test that does not do server
+        # TODO: testing since the PASTA user does not exist on ldap.lternet.edu
+        # host = Config.LDAP_LTER
+        # do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+        #         store=store, quiet=quiet)
+
+        host = Config.UNIT
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.VOCAB
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+    elif args['production']:
+        host = Config.PASTA
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PACKAGE
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.AUDIT
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.SOLR
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        if args['--portal']:
             host = Config.PORTAL_LTER
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.PORTAL_S_LTER
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.PORTAL_D_LTER
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
             host = Config.PORTAL_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
-            host = Config.PORTAL_S_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.PORTAL_D_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
+        if args['--gmn']:
             host = Config.GMN_LTER
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.GMN_S_LTER
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
             host = Config.GMN_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
+
+    elif args['staging']:
+        host = Config.PASTA_S
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.PACKAGE_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.AUDIT_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        host = Config.SOLR_S
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
+
+        if args['--portal']:
+            host = Config.PORTAL_S_LTER
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
+
+            host = Config.PORTAL_S_EDI
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
+
+        if args['--gmn']:
+            host = Config.GMN_S_LTER
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
             host = Config.GMN_S_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
-            host = Config.LDAP_EDI
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+    elif args['development']:
+        host = Config.PASTA_D
+        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            # TODO: create special LTERLDAPSERVER test that does not do server
-            # TODO: testing since the PASTA user does not exist on ldap.lternet.edu
-            # host = Config.LDAP_LTER
-            # now_utc = pendulum.now('UTC')
-            # status = Server.test_server(host=host)
-            # print('{host}: {status}'.format(host=host, status=status))
-            # soh_db.insert_soh_status(event_id=event_id, server=host,
-            #                          status=str(status), timestamp=now_utc)
+        host = Config.PACKAGE_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.UNIT
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.AUDIT_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-            host = Config.VOCAB
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        host = Config.SOLR_D
+        do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                 store=store, quiet=quiet)
 
-        elif args['production']:
-            host = Config.PASTA
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+        if args['--portal']:
+            host = Config.PORTAL_D_LTER
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
-            host = Config.PACKAGE
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
+            host = Config.PORTAL_D_EDI
+            do_check(host=host, server=Server, db=soh_db, event_id=event_id,
+                     store=store, quiet=quiet)
 
-            host = Config.AUDIT
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.SOLR
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            if args['--portal']:
-                host = Config.PORTAL_LTER
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-                host = Config.PORTAL_EDI
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-            if args['--gmn']:
-                host = Config.GMN_LTER
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-                host = Config.GMN_EDI
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-        elif args['staging']:
-            host = Config.PASTA_S
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.PACKAGE_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.AUDIT_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.SOLR_S
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            if args['--portal']:
-                host = Config.PORTAL_S_LTER
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-                host = Config.PORTAL_S_EDI
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-            if args['--gmn']:
-                host = Config.GMN_S_LTER
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-                host = Config.GMN_S_EDI
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-        elif args['development']:
-            host = Config.PASTA_D
-            now_utc = pendulum.now('UTC')
-            status = PastaServer.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.PACKAGE_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.AUDIT_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            host = Config.SOLR_D
-            now_utc = pendulum.now('UTC')
-            status = Server.test_server(host=host)
-            print('{host}: {status}'.format(host=host, status=status))
-            soh_db.insert_soh_status(event_id=event_id, server=host,
-                                     status=str(status), timestamp=now_utc)
-
-            if args['--portal']:
-                host = Config.PORTAL_D_LTER
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-                host = Config.PORTAL_D_EDI
-                now_utc = pendulum.now('UTC')
-                status = Server.test_server(host=host)
-                print('{host}: {status}'.format(host=host, status=status))
-                soh_db.insert_soh_status(event_id=event_id, server=host,
-                                         status=str(status), timestamp=now_utc)
-
-    else:
-        logger.warn('No event identifier available - aborting...')
+    lock.release()
+    logger.info('Lock file {} released'.format(lock.lock_file))
 
     return 0
 

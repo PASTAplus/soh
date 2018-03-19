@@ -22,7 +22,7 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 
-class Event(Base):
+class SohEvent(Base):
 
     __tablename__ = 'soh_event'
 
@@ -30,9 +30,9 @@ class Event(Base):
     timestamp = Column(DateTime(), nullable=False)
 
 
-class Test(Base):
+class SohAssert(Base):
 
-    __tablename__ = 'soh_test'
+    __tablename__ = 'soh_assert'
 
     test_id = Column(Integer(), primary_key=True)
     test_key = Column(String(), nullable=False)
@@ -40,12 +40,12 @@ class Test(Base):
     test_description = Column(String(), nullable=False)
 
 
-class Status(Base):
+class SohStatus(Base):
 
-    __tablename__ = 'soh'
+    __tablename__ = 'soh_status'
 
     status_id = Column(Integer(), primary_key=True)
-    event_id = Column(Integer(), ForeignKey('soh_event.event_id'))
+    event_id = Column(Integer(), ForeignKey('event.event_id'))
     server = Column(String(), nullable=False)
     status = Column(String(), nullable=False)
     timestamp = Column(DateTime(), nullable=False)

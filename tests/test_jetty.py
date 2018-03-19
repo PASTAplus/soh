@@ -19,7 +19,7 @@ import unittest
 import daiquiri
 
 from soh.config import Config
-from soh.tests import jetty
+from soh.asserts import jetty
 
 daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('test_server.py: ' + __name__)

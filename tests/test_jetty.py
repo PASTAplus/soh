@@ -22,7 +22,7 @@ from soh.config import Config
 from soh.asserts import jetty
 
 daiquiri.setup(level=logging.INFO)
-logger = daiquiri.getLogger('test_server.py: ' + __name__)
+logger = daiquiri.getLogger('test_jetty.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))
 

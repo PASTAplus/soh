@@ -27,7 +27,7 @@ logger = daiquiri.getLogger('server.py: ' + __name__)
 class Server(object):
 
     @staticmethod
-    def test_server(host=None):
+    def check_server(host=None):
         status = Config.UP
         if Server.server_is_down(host=host):
             status = status | Config.SERVER_DOWN
@@ -51,7 +51,7 @@ class PastaServer(Server):
     """
 
     @staticmethod
-    def test_server(host=None):
+    def check_server(host=None):
         status = Config.UP
         if PastaServer.jetty_is_down(host=host):
             status = status | Config.JETTY_DOWN

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""":Mod: test_server
+""":Mod: check_server
 
 :Synopsis:
 
@@ -40,7 +40,7 @@ class TestServer(unittest.TestCase):
         pass
 
     def test_test_server(self):
-        status = Server.test_server(host=host)
+        status = Server.check_server(host=host)
         self.assertEqual(status, Config.UP)
 
 

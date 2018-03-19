@@ -17,8 +17,8 @@ import logging
 import daiquiri
 
 from soh.config import Config
-from soh.tests import server
-from soh.tests import jetty
+from soh.asserts import server
+from soh.asserts import jetty
 
 daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('server.py: ' + __name__)
@@ -45,6 +45,10 @@ class Server(object):
 
 
 class PastaServer(Server):
+    """
+    The PastaServer uniquely identifies services provided by the Gatekeeper
+    service as identified by the host name "pasta".
+    """
 
     @staticmethod
     def test_server(host=None):

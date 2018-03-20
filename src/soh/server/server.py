@@ -11,16 +11,12 @@
 :Created:
     3/16/18
 """
-
-import logging
-
 import daiquiri
 
 from soh.config import Config
 from soh.asserts import server
 from soh.asserts import jetty
 
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('server.py: ' + __name__)
 
 

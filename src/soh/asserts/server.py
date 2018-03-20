@@ -11,9 +11,6 @@
 :Created:
     3/12/18
 """
-
-import logging
-
 import daiquiri
 import paramiko
 

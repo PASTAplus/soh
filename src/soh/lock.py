@@ -12,15 +12,12 @@
 :Created:
     3/31/17
 """
-import logging
 import os
 import random
 import string
 
 import daiquiri
 
-
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('lock.py: ' + __name__)
 
 

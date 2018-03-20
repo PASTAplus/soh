@@ -11,8 +11,6 @@
 :Created:
     3/16/18
 """
-
-import logging
 import sys
 
 import daiquiri
@@ -25,7 +23,6 @@ from soh.model.soh_db import SohDb
 from soh.server.server import Server
 from soh.server.server import PastaServer
 
-daiquiri.setup(level=logging.WARN)
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
 

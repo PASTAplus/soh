@@ -11,7 +11,6 @@
 :Created:
     3/16/18
 """
-import logging
 import os
 import sys
 import unittest
@@ -21,7 +20,6 @@ import daiquiri
 from soh.config import Config
 from soh.asserts import jetty
 
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('test_jetty.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))

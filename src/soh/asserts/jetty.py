@@ -11,13 +11,9 @@
 :Created:
     3/16/18
 """
-
-import logging
-
 import daiquiri
 import requests
 
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('jetty.py: ' + __name__)
 
 

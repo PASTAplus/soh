@@ -11,7 +11,6 @@
 :Created:
     3/16/18
 """
-import logging
 import os
 import sys
 import unittest
@@ -22,7 +21,6 @@ from soh.config import Config
 from soh.server.server import Server
 
 
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('test_server.py: ' + __name__)
 
 

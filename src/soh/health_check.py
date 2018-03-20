@@ -103,205 +103,205 @@ def main(argv):
             return 1
 
     if args['all']:
-        host = Config.PASTA
+        host = Config.servers['PASTA']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE
+        host = Config.servers['PACKAGE']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT
+        host = Config.servers['AUDIT']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR
+        host = Config.servers['SOLR']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PASTA_S
+        host = Config.servers['PASTA_S']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE_S
+        host = Config.servers['PACKAGE_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT_S
+        host = Config.servers['AUDIT_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR_S
+        host = Config.servers['SOLR_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PASTA_D
+        host = Config.servers['PASTA_D']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE_D
+        host = Config.servers['PACKAGE_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT_D
+        host = Config.servers['AUDIT_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR_D
+        host = Config.servers['SOLR_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_LTER
+        host = Config.servers['PORTAL_LTER']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_S_LTER
+        host = Config.servers['PORTAL_S_LTER']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_D_LTER
+        host = Config.servers['PORTAL_D_LTER']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_EDI
+        host = Config.servers['PORTAL_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_S_EDI
+        host = Config.servers['PORTAL_S_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PORTAL_D_EDI
+        host = Config.servers['PORTAL_D_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.GMN_LTER
+        host = Config.servers['GMN_LTER']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.GMN_S_LTER
+        host = Config.servers['GMN_S_LTER']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.GMN_EDI
+        host = Config.servers['GMN_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.GMN_S_EDI
+        host = Config.servers['GMN_S_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.LDAP_EDI
+        host = Config.servers['LDAP_EDI']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         # TODO: create special LTERLDAPSERVER test that does not do server
         # TODO: testing since the PASTA user does not exist on ldap.lternet.edu
-        # host = Config.LDAP_LTER
+        # host = Config.servers['LDAP_LTER']
         # do_check(host=host, server=Server, db=soh_db, event_id=event_id,
         #         store=store, quiet=quiet)
 
-        host = Config.UNIT
+        host = Config.servers['UNIT']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.VOCAB
+        host = Config.servers['VOCAB']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
     elif args['production']:
-        host = Config.PASTA
+        host = Config.servers['PASTA']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE
+        host = Config.servers['PACKAGE']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT
+        host = Config.servers['AUDIT']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR
+        host = Config.servers['SOLR']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         if args['--portal']:
-            host = Config.PORTAL_LTER
+            host = Config.servers['PORTAL_LTER']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
-            host = Config.PORTAL_EDI
+            host = Config.servers['PORTAL_EDI']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
         if args['--gmn']:
-            host = Config.GMN_LTER
+            host = Config.servers['GMN_LTER']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
-            host = Config.GMN_EDI
+            host = Config.servers['GMN_EDI']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
     elif args['staging']:
-        host = Config.PASTA_S
+        host = Config.servers['PASTA_S']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE_S
+        host = Config.servers['PACKAGE_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT_S
+        host = Config.servers['AUDIT_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR_S
+        host = Config.servers['SOLR_S']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         if args['--portal']:
-            host = Config.PORTAL_S_LTER
+            host = Config.servers['PORTAL_S_LTER']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
-            host = Config.PORTAL_S_EDI
+            host = Config.servers['PORTAL_S_EDI']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
         if args['--gmn']:
-            host = Config.GMN_S_LTER
+            host = Config.servers['GMN_S_LTER']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
-            host = Config.GMN_S_EDI
+            host = Config.servers['GMN_S_EDI']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
     elif args['development']:
-        host = Config.PASTA_D
+        host = Config.servers['PASTA_D']
         do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.PACKAGE_D
+        host = Config.servers['PACKAGE_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.AUDIT_D
+        host = Config.servers['AUDIT_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
-        host = Config.SOLR_D
+        host = Config.servers['SOLR_D']
         do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         if args['--portal']:
-            host = Config.PORTAL_D_LTER
+            host = Config.servers['PORTAL_D_LTER']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 
-            host = Config.PORTAL_D_EDI
+            host = Config.servers['PORTAL_D_EDI']
             do_check(host=host, server=Server, db=soh_db, event_id=event_id,
                      store=store, quiet=quiet)
 

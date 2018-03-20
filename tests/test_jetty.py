@@ -24,7 +24,7 @@ logger = daiquiri.getLogger('test_jetty.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-host = Config.PASTA_D
+host = Config.servers['PASTA_D']
 
 
 class TestJetty(unittest.TestCase):

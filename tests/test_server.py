@@ -26,7 +26,7 @@ logger = daiquiri.getLogger('test_server.py: ' + __name__)
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-host = Config.PASTA_D
+host = Config.servers['PASTA_D']
 
 
 class TestServer(unittest.TestCase):

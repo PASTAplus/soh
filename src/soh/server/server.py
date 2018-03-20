@@ -26,7 +26,7 @@ class Server(object):
     def check_server(host=None):
         status = Config.UP
         if Server.server_is_down(host=host):
-            status = status | Config.SERVER_DOWN
+            status = status | Config.assertions['SERVER_DOWN']
         return status
 
     @staticmethod
@@ -50,9 +50,9 @@ class PastaServer(Server):
     def check_server(host=None):
         status = Config.UP
         if PastaServer.jetty_is_down(host=host):
-            status = status | Config.JETTY_DOWN
+            status = status | Config.assertions['JETTY_DOWN']
             if PastaServer.server_is_down(host=host):
-                status = status | Config.SERVER_DOWN
+                status = status | Config.assertions['SERVER_DOWN']
         return status
 
     @staticmethod

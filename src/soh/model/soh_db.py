@@ -12,16 +12,11 @@
 :Created:
     3/18/18
 """
-import logging
-
 import daiquiri
-from sqlalchemy import Column, Integer, Float, String, Date, DateTime, \
-    ForeignKey, desc, asc
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, desc, asc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.exc import NoResultFound
 
-daiquiri.setup(level=logging.INFO)
 logger = daiquiri.getLogger('soh_db.py: ' + __name__)
 
 Base = declarative_base()
@@ -37,10 +32,10 @@ class SohEvent(Base):
 class SohAssert(Base):
     __tablename__ = 'soh_assert'
 
-    test_id = Column(Integer(), primary_key=True, autoincrement=True)
-    test_key = Column(String(), nullable=False)
-    test__name = Column(String(), nullable=False)
-    test_description = Column(String(), nullable=False)
+    assert_id = Column(Integer(), primary_key=True, autoincrement=True)
+    assert_key = Column(String(), nullable=False)
+    assert_name = Column(String(), nullable=False)
+    assert_description = Column(String(), nullable=False)
 
 
 class SohStatus(Base):

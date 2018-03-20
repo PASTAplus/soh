@@ -17,7 +17,6 @@ import logging
 import daiquiri
 import paramiko
 
-daiquiri.setup(level=logging.WARN)
 logger = daiquiri.getLogger('server.py: ' + __name__)
 
 
@@ -33,7 +32,8 @@ def uptime(host=None, user=None, key_path=None, key_pass=None):
 
     try:
         client.connect(hostname=host, port=port, username=user,
-                       key_filename=key_path, passphrase=key_pass)
+                       key_filename=key_path, passphrase=key_pass, timeout=5.0,
+                       auth_timeout=5.0)
 
         stdin, stdout, stderr = client.exec_command(command=cmd)
         line = ''.join([_.strip() for _ in stdout.readlines()])

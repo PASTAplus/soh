@@ -1,0 +1,2 @@
+insert into soh_assert (assert_key, assert_name, assert_description) values ('1', 'SERVER_DOWN', 'Server does not respond to uptime request');
+insert into soh_assert (assert_key, assert_name, assert_description) values ('2', 'JETTY_DOWN', 'Jetty does not respond with a 200 OK to a GET request');

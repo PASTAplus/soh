@@ -66,7 +66,7 @@ def main(argv):
     """
     args = docopt(str(main.__doc__))
 
-    lock = Lock('/tmp/poll_manager.lock')
+    lock = Lock('/tmp/pastaplus_soh.lock')
     if lock.locked:
         logger.error('Lock file {} exists, exiting...'.format(lock.lock_file))
         return 1

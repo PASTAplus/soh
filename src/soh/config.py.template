@@ -55,6 +55,9 @@ class Config(object):
 
     # SOH anti-assertions and corresponding identifiers
     assertions = {
-        'SERVER_DOWN': 1,  # 0001
-        'JETTY_DOWN':  2,  # 0010
+        'SERVER_DOWN': 1,  # 00001
+        'JETTY_DOWN':  2,  # 00010
+        'TOMCAT_DOWN': 4,  # 00100
+        'SOLR_DOWN':   8,  # 01000
+        'LDAP_DOWN':  16,  # 10000
     }

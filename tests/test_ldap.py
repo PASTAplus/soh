@@ -41,7 +41,8 @@ class TestModuleName(unittest.TestCase):
         self.assertIsNot(is_down, True)
 
     def test_Ldap(self):
-        status = LdapServer.check_server(host=host)
+        server = LdapServer(host=host)
+        status = server.check_server()
         self.assertEqual(status, Config.UP)
 
 

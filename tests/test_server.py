@@ -47,7 +47,8 @@ class TestServer(unittest.TestCase):
         self.assertIsNotNone(uptime)
 
     def test_Server(self):
-        status = Server.check_server(host=host)
+        server = Server(host=host)
+        status = server.check_server()
         self.assertEqual(status, Config.UP)
 
 

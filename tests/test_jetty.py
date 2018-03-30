@@ -41,7 +41,8 @@ class TestJetty(unittest.TestCase):
         self.assertIsNot(is_down, True)
 
     def test_Jetty(self):
-        status = JettyServer.check_server(host=host)
+        server = JettyServer(host=host)
+        status = server.check_server()
         self.assertEqual(status, Config.UP)
 
 

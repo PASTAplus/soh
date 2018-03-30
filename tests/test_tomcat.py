@@ -40,7 +40,8 @@ class TestTomcat(unittest.TestCase):
         self.assertIsNot(is_down, True)
 
     def test_Tomcat(self):
-        status = TomcatServer.check_server(host=host)
+        server = TomcatServer(host=host)
+        status = server.check_server()
         self.assertEqual(status, Config.UP)
 
 

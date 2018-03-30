@@ -21,7 +21,7 @@ def is_down(host=None):
     url = 'http://' + host + ':8080'
     assert_is_down = True
     try:
-        r = requests.get(url=url)
+        r = requests.get(url=url, timeout=5.0)
         assert_is_down = r.status_code != requests.codes.ok
     except Exception as e:
         logger.error(e)

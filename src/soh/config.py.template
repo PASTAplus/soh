@@ -53,7 +53,7 @@ class Config(object):
         'VOCAB': 'vocab.lternet.edu',
     }
 
-    def server_types = {
+    server_types = {
         'SERVER': ['gmn.edirepository.org',
                    'gmn-s.edirepository.org',
                    'gmn.lternet.edu',
@@ -62,16 +62,22 @@ class Config(object):
                    'vocab.lternet.edu'],
         'JETTY': ['pasta.lternet.edu',
                   'pasta-s.lternet.edu',
-                  'pasta-d.lternet.edu']
+                  'pasta-d.lternet.edu'],
         'TOMCAT': ['package.lternet.edu',
                    'audit.lternet.edu',
+                   'portal.edirepository.org',
+                   'portal.lternet.edu',
                    'package-s,lternet.edu',
                    'audit-s.lternet.edu',
+                   'portal-s.edirepository.org',
+                   'portal-s.lternet.edu',
                    'package-d.lternet.edu',
-                   'audit-d.lternet.edu'],
+                   'audit-d.lternet.edu',
+                   'portal-d.edirepository.org',
+                   'portal-d.lternet.edu'],
         'SOLR': ['solr.lternet.edu',
                  'solr-s.lternet.edu',
-                 'solr-d.lternet.edu']
+                 'solr-d.lternet.edu'],
         'LDAP': ['ldap.edirepository.org',
                  'ldap.lternet.edu']
     }

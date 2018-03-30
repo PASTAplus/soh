@@ -21,7 +21,7 @@ from soh.config import Config
 from soh.lock import Lock
 from soh.model.soh_db import SohDb
 from soh.server.server import Server
-from soh.server.server import PastaServer
+from soh.server.server import JettyServer
 
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
@@ -49,6 +49,8 @@ def main(argv):
             [-q | --quiet]
         health_check.py development [-p | --portal] [-s | --store]
             [-q | --quiet]
+        health_check.py server <server> [-p | --portal] [-s | --store]
+            [-q | --quiet]
         health_check.py -h | --help
 
     Arguments:
@@ -56,6 +58,7 @@ def main(argv):
         production  Examine production tier servers
         staging     Examine staging tier servers
         development Examine development tier servers
+        server      Examine specified server
 
     Options:
         -h --help       This page
@@ -104,7 +107,7 @@ def main(argv):
 
     if args['all']:
         host = Config.servers['PASTA']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE']
@@ -120,7 +123,7 @@ def main(argv):
                  store=store, quiet=quiet)
 
         host = Config.servers['PASTA_S']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE_S']
@@ -136,7 +139,7 @@ def main(argv):
                  store=store, quiet=quiet)
 
         host = Config.servers['PASTA_D']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE_D']
@@ -211,7 +214,7 @@ def main(argv):
 
     elif args['production']:
         host = Config.servers['PASTA']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE']
@@ -246,7 +249,7 @@ def main(argv):
 
     elif args['staging']:
         host = Config.servers['PASTA_S']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE_S']
@@ -281,7 +284,7 @@ def main(argv):
 
     elif args['development']:
         host = Config.servers['PASTA_D']
-        do_check(host=host, server=PastaServer, db=soh_db, event_id=event_id,
+        do_check(host=host, server=JettyServer, db=soh_db, event_id=event_id,
                  store=store, quiet=quiet)
 
         host = Config.servers['PACKAGE_D']

@@ -19,10 +19,10 @@ logger = daiquiri.getLogger('jetty.py: ' + __name__)
 
 def is_down(host=None):
     url = 'http://' + host + ':8080'
-    is_down = True
+    assert_is_down = True
     try:
         r = requests.get(url=url)
-        is_down = r.status_code != requests.codes.ok
+        assert_is_down = r.status_code != requests.codes.ok
     except Exception as e:
         logger.error(e)
-    return is_down
+    return assert_is_down

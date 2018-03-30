@@ -17,6 +17,7 @@ import unittest
 
 import daiquiri
 
+from soh.asserts import server
 from soh.config import Config
 from soh.server.server import Server
 
@@ -37,7 +38,15 @@ class TestServer(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_test_server(self):
+    def test_server_uptime(self):
+        user = Config.USER
+        key_path = Config.KEY_PATH
+        key_pass = Config.KEY_PASS
+        uptime = server.uptime(host=host, user=user, key_path=key_path,
+                               key_pass=key_pass)
+        self.assertIsNotNone(uptime)
+
+    def test_Server(self):
         status = Server.check_server(host=host)
         self.assertEqual(status, Config.UP)
 

@@ -24,18 +24,19 @@ logger = daiquiri.getLogger('server.py: ' + __name__)
 
 
 class Server(object):
+    
+    def __init__(self, host=None):
+        self._host = host
 
-    @staticmethod
-    def check_server(host=None):
+    def check_server(self):
         status = Config.UP
-        if Server.server_is_down(host=host):
+        if self._server_is_down():
             status = status | Config.assertions['SERVER_DOWN']
         return status
 
-    @staticmethod
-    def server_is_down(host=None):
+    def _server_is_down(self):
         server_is_down = False
-        server_uptime = server.uptime(host=host, user=Config.USER,
+        server_uptime = server.uptime(host=self._host, user=Config.USER,
                                       key_path=Config.KEY_PATH,
                                       key_pass=Config.KEY_PASS)
         if server_uptime is None:
@@ -49,18 +50,16 @@ class JettyServer(Server):
     Gatekeeper service as identified by the host name "pasta".
     """
 
-    @staticmethod
-    def check_server(host=None):
+    def check_server(self):
         status = Config.UP
-        if JettyServer.jetty_is_down(host=host):
+        if self._jetty_is_down():
             status = status | Config.assertions['JETTY_DOWN']
-            if JettyServer.server_is_down(host=host):
+            if self._server_is_down():
                 status = status | Config.assertions['SERVER_DOWN']
         return status
 
-    @staticmethod
-    def jetty_is_down(host=None):
-        return jetty.is_down(host=host)
+    def _jetty_is_down(self):
+        return jetty.is_down(host=self._host)
 
 
 class TomcatServer(Server):
@@ -69,18 +68,16 @@ class TomcatServer(Server):
     services, such as the Data Package Manager and Audit Manager.
     """
 
-    @staticmethod
-    def check_server(host=None):
+    def check_server(self):
         status = Config.UP
-        if TomcatServer.tomcat_is_down(host=host):
+        if self._tomcat_is_down():
             status = status | Config.assertions['TOMCAT_DOWN']
-            if TomcatServer.server_is_down(host=host):
+            if self._server_is_down():
                 status = status | Config.assertions['SERVER_DOWN']
         return status
 
-    @staticmethod
-    def tomcat_is_down(host=None):
-        return tomcat.is_down(host=host)
+    def _tomcat_is_down(self):
+        return tomcat.is_down(host=self._host)
 
 
 class SolrServer(Server):
@@ -89,18 +86,16 @@ class SolrServer(Server):
     service, Solr.
     """
 
-    @staticmethod
-    def check_server(host=None):
+    def check_server(self):
         status = Config.UP
-        if SolrServer.solr_is_down(host=host):
+        if self._solr_is_down():
             status = status | Config.assertions['SOLR_DOWN']
-            if SolrServer.server_is_down(host=host):
+            if self._server_is_down():
                 status = status | Config.assertions['SERVER_DOWN']
         return status
 
-    @staticmethod
-    def solr_is_down(host=None):
-        return solr.is_down(host=host)
+    def _solr_is_down(self):
+        return solr.is_down(host=self._host)
 
 
 class LdapServer(Server):
@@ -109,15 +104,13 @@ class LdapServer(Server):
     service, LDAP.
     """
 
-    @staticmethod
-    def check_server(host=None):
+    def check_server(self):
         status = Config.UP
-        if LdapServer.ldap_is_down(host=host):
+        if self._ldap_is_down():
             status = status | Config.assertions['LDAP_DOWN']
-            if LdapServer.server_is_down(host=host):
+            if self._server_is_down():
                 status = status | Config.assertions['SERVER_DOWN']
         return status
 
-    @staticmethod
-    def ldap_is_down(host=None):
-        return ldap.is_down(host=host)
+    def _ldap_is_down(self):
+        return ldap.is_down(host=self._host)

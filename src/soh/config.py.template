@@ -53,6 +53,29 @@ class Config(object):
         'VOCAB': 'vocab.lternet.edu',
     }
 
+    def server_types = {
+        'SERVER': ['gmn.edirepository.org',
+                   'gmn-s.edirepository.org',
+                   'gmn.lternet.edu',
+                   'gmn-s.lternet.edu',
+                   'unit.lternet.edu',
+                   'vocab.lternet.edu'],
+        'JETTY': ['pasta.lternet.edu',
+                  'pasta-s.lternet.edu',
+                  'pasta-d.lternet.edu']
+        'TOMCAT': ['package.lternet.edu',
+                   'audit.lternet.edu',
+                   'package-s,lternet.edu',
+                   'audit-s.lternet.edu',
+                   'package-d.lternet.edu',
+                   'audit-d.lternet.edu'],
+        'SOLR': ['solr.lternet.edu',
+                 'solr-s.lternet.edu',
+                 'solr-d.lternet.edu']
+        'LDAP': ['ldap.edirepository.org',
+                 'ldap.lternet.edu']
+    }
+
     # SOH anti-assertions and corresponding identifiers
     assertions = {
         'SERVER_DOWN': 1,  # 00001

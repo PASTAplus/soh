@@ -326,6 +326,11 @@ def main(argv):
             do_check(host=host, db=soh_db, event_id=event_id, store=store,
                      quiet=quiet)
 
+    elif args['server']:
+        host = args['<server>']
+        do_check(host=host, db=soh_db, event_id=event_id, store=store,
+                 quiet=quiet)
+
     lock.release()
     logger.info('Lock file {} released'.format(lock.lock_file))
 

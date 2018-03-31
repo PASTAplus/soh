@@ -92,7 +92,7 @@ class Config(object):
         'APACHE_DOWN': 32,  # 100000
     }
 
-    assertion_types = {
+    server_assertions = {
         'SERVER': ['SERVER_DOWN'],
         'APACHE': ['APACHE_DOWN', 'SERVER_DOWN'],
         'JETTY': ['JETTY_DOWN', 'SERVER_DOWN'],

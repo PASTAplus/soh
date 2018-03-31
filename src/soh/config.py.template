@@ -54,12 +54,12 @@ class Config(object):
     }
 
     server_types = {
-        'SERVER': ['gmn.edirepository.org',
+        'SERVER': ['unit.lternet.edu',
+                   'vocab.lternet.edu'],
+        'APACHE': ['gmn.edirepository.org',
                    'gmn-s.edirepository.org',
                    'gmn.lternet.edu',
-                   'gmn-s.lternet.edu',
-                   'unit.lternet.edu',
-                   'vocab.lternet.edu'],
+                   'gmn-s.lternet.edu'],
         'JETTY': ['pasta.lternet.edu',
                   'pasta-s.lternet.edu',
                   'pasta-d.lternet.edu'],

@@ -91,3 +91,13 @@ class Config(object):
         'LDAP_DOWN':   16,  # 010000
         'APACHE_DOWN': 32,  # 100000
     }
+
+    assertion_types = {
+        'SERVER': ['SERVER_DOWN'],
+        'APACHE': ['APACHE_DOWN', 'SERVER_DOWN'],
+        'JETTY': ['JETTY_DOWN', 'SERVER_DOWN'],
+        'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN'],
+        'SOLR': ['SOLR_DOWN', 'SERVER_DOWN'],
+        'LDAP': ['LDAP_DOWN', 'SERVER_DOWN'],
+        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN']
+    }

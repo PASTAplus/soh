@@ -65,28 +65,29 @@ class Config(object):
                   'pasta-d.lternet.edu'],
         'TOMCAT': ['package.lternet.edu',
                    'audit.lternet.edu',
-                   'portal.edirepository.org',
-                   'portal.lternet.edu',
-                   'package-s,lternet.edu',
+                   'package-s.lternet.edu',
                    'audit-s.lternet.edu',
-                   'portal-s.edirepository.org',
-                   'portal-s.lternet.edu',
                    'package-d.lternet.edu',
-                   'audit-d.lternet.edu',
-                   'portal-d.edirepository.org',
-                   'portal-d.lternet.edu'],
+                   'audit-d.lternet.edu',],
         'SOLR': ['solr.lternet.edu',
                  'solr-s.lternet.edu',
                  'solr-d.lternet.edu'],
         'LDAP': ['ldap.edirepository.org',
-                 'ldap.lternet.edu']
+                 'ldap.lternet.edu'],
+        'APACHE_TOMCAT': ['portal.edirepository.org',
+                          'portal.lternet.edu',
+                          'portal-s.edirepository.org',
+                          'portal-s.lternet.edu',
+                          'portal-d.edirepository.org',
+                          'portal-d.lternet.edu'],
     }
 
     # SOH anti-assertions and corresponding identifiers
     assertions = {
-        'SERVER_DOWN': 1,  # 00001
-        'JETTY_DOWN':  2,  # 00010
-        'TOMCAT_DOWN': 4,  # 00100
-        'SOLR_DOWN':   8,  # 01000
-        'LDAP_DOWN':  16,  # 10000
+        'SERVER_DOWN':  1,  # 000001
+        'JETTY_DOWN':   2,  # 000010
+        'TOMCAT_DOWN':  4,  # 000100
+        'SOLR_DOWN':    8,  # 001000
+        'LDAP_DOWN':   16,  # 010000
+        'APACHE_DOWN': 32,  # 100000
     }

@@ -20,7 +20,7 @@ import pendulum
 from soh.config import Config
 from soh.lock import Lock
 from soh.model.soh_db import SohDb
-from soh.server.server import Server
+from soh.server.server import ApacheTomcatServer
 from soh.server.server import JettyServer
 from soh.server.server import LdapServer
 from soh.server.server import Server
@@ -44,6 +44,8 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None):
         server = SolrServer(host=host)
     elif host in Config.server_types['LDAP']:
         server = LdapServer(host=host)
+    elif host in Config.server_types['APACHE_TOMCAT']:
+        server = ApacheTomcatServer(host=host)
     else:
         logger.error('Unkown server: {host}'.format(host=host))
         return

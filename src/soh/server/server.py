@@ -14,6 +14,7 @@
 import daiquiri
 
 from soh.config import Config
+from soh.asserts import apache
 from soh.asserts import jetty
 from soh.asserts import ldap
 from soh.asserts import server
@@ -114,3 +115,43 @@ class LdapServer(Server):
 
     def _ldap_is_down(self):
         return ldap.is_down(host=self._host)
+
+
+class ApacheServer(Server):
+    """
+    The ApacheServer identifies services provided by the Apache web server.
+    """
+
+    def check_server(self):
+        status = Config.UP
+        if self._apache_is_down():
+            status = status | Config.assertions['APACHE_DOWN']
+            if self._server_is_down():
+                status = status | Config.assertions['SERVER_DOWN']
+        return status
+
+    def _apache_is_down(self):
+        return apache.is_down(host=self._host)
+
+
+class ApacheTomcatServer(Server):
+    """
+    The ApacheTomcatServer identifies services provided by the PASTA data portal
+    user interface.
+    """
+
+    def check_server(self):
+        status = Config.UP
+        if self._apache_is_down():
+            status = status | Config.assertions['APACHE_DOWN']
+            if self._tomcat_is_down():
+                status = status | Config.assertions['TOMCAT_DOWN']
+                if self._server_is_down():
+                    status = status | Config.assertions['SERVER_DOWN']
+        return status
+
+    def _apache_is_down(self):
+        return apache.is_down(host=self._host)
+
+    def _tomcat_is_down(self):
+        return tomcat.is_down(host=self._host)

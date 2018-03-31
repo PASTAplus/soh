@@ -18,7 +18,7 @@ logger = daiquiri.getLogger('apache.py: ' + __name__)
 
 
 def is_down(host=None):
-    url = 'http://' + host + '/nis'
+    url = 'http://' + host
     assert_is_down = True
     try:
         r = requests.get(url=url, timeout=5.0)

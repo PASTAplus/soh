@@ -22,8 +22,12 @@ from soh.lock import Lock
 from soh.model.soh_db import SohDb
 from soh.server.server import ApacheServer
 from soh.server.server import ApacheTomcatServer
+from soh.server.server import AuditServer
+from soh.server.server import GmnServer
 from soh.server.server import JettyServer
 from soh.server.server import LdapServer
+from soh.server.server import PackageServer
+from soh.server.server import PortalServer
 from soh.server.server import Server
 from soh.server.server import SolrServer
 from soh.server.server import TomcatServer
@@ -35,22 +39,30 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None):
     now_utc = pendulum.now('UTC')
 
     server = None
-    if host in Config.server_types['SERVER']:
-        server = Server(host=host)
-    elif host in Config.server_types['JETTY']:
-        server = JettyServer(host=host)
-    elif host in Config.server_types['TOMCAT']:
-        server = TomcatServer(host=host)
-    elif host in Config.server_types['SOLR']:
-        server = SolrServer(host=host)
-    elif host in Config.server_types['LDAP']:
-        server = LdapServer(host=host)
-    elif host in Config.server_types['APACHE']:
+    if host in Config.server_types['APACHE']:
         server = ApacheServer(host=host)
     elif host in Config.server_types['APACHE_TOMCAT']:
         server = ApacheTomcatServer(host=host)
+    elif host in Config.server_types['AUDIT']:
+        server = AuditServer(host=host)
+    elif host in Config.server_types['GMN']:
+        server = GmnServer(host=host)
+    elif host in Config.server_types['JETTY']:
+        server = JettyServer(host=host)
+    elif host in Config.server_types['LDAP']:
+        server = LdapServer(host=host)
+    elif host in Config.server_types['PACKAGE']:
+        server = PackageServer(host=host)
+    elif host in Config.server_types['PORTAL']:
+        server = PortalServer(host=host)
+    elif host in Config.server_types['SERVER']:
+        server = Server(host=host)
+    elif host in Config.server_types['SOLR']:
+        server = SolrServer(host=host)
+    elif host in Config.server_types['TOMCAT']:
+        server = TomcatServer(host=host)
     else:
-        logger.error('Unkown server: {host}'.format(host=host))
+        logger.error('Unknown server: {host}'.format(host=host))
         return
 
     status = server.check_server()

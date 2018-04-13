@@ -15,8 +15,12 @@ import daiquiri
 
 from soh.config import Config
 from soh.asserts import apache
+from soh.asserts import audit
+from soh.asserts import gmn
 from soh.asserts import jetty
 from soh.asserts import ldap
+from soh.asserts import package
+from soh.asserts import portal
 from soh.asserts import server
 from soh.asserts import solr
 from soh.asserts import tomcat
@@ -142,12 +146,12 @@ class ApacheTomcatServer(Server):
 
     def check_server(self):
         status = Config.UP
+        if self._tomcat_is_down():
+            status = status | Config.assertions['TOMCAT_DOWN']
         if self._apache_is_down():
             status = status | Config.assertions['APACHE_DOWN']
-            if self._tomcat_is_down():
-                status = status | Config.assertions['TOMCAT_DOWN']
-                if self._server_is_down():
-                    status = status | Config.assertions['SERVER_DOWN']
+            if self._server_is_down():
+                status = status | Config.assertions['SERVER_DOWN']
         return status
 
     def _apache_is_down(self):
@@ -155,3 +159,80 @@ class ApacheTomcatServer(Server):
 
     def _tomcat_is_down(self):
         return tomcat.is_down(host=self._host)
+
+
+class GmnServer(Server):
+    """
+    The GmnServer identifies services provided by the DataONE Generic Member
+    Node API.
+    """
+
+    def check_server(self):
+        status = Config.UP
+        if self._gmn_is_down():
+            status = status | Config.assertions['GMN_DOWN']
+            if self._apache_is_down():
+                status = status | Config.assertions['APACHE_DOWN']
+                if self._server_is_down():
+                    status = status | Config.assertions['SERVER_DOWN']
+        return status
+
+    def _apache_is_down(self):
+        return apache.is_down(host=self._host)
+
+    def _gmn_is_down(self):
+        return gmn.is_down(host=self._host)
+
+
+class PortalServer(ApacheTomcatServer):
+    """
+    The PortalServer identifies services provided by the communities data
+    portal interface.
+    """
+
+    def check_server(self):
+        status = Config.UP
+        if self._portal_is_down():
+            status = status | Config.assertions['PORTAL_DOWN']
+            if self._tomcat_is_down():
+                status = status | Config.assertions['TOMCAT_DOWN']
+            if self._apache_is_down():
+                status = status | Config.assertions['APACHE_DOWN']
+                if self._server_is_down():
+                    status = status | Config.assertions['SERVER_DOWN']
+        return status
+
+    def _portal_is_down(self):
+        return portal.is_down(host=self._host)
+
+
+class PackageServer(TomcatServer):
+
+     def check_server(self):
+         status = Config.UP
+         if self._package_is_down():
+             status = status | Config.assertions['PACKAGE_DOWN']
+             if self._tomcat_is_down():
+                 status = status | Config.assertions['TOMCAT_DOWN']
+                 if self._server_is_down():
+                     status = status | Config.assertions['SERVER_DOWN']
+         return status
+
+     def _package_is_down(self):
+         return package.is_down(host=self._host)
+
+
+class AuditServer(TomcatServer):
+
+     def check_server(self):
+         status = Config.UP
+         if self._audit_is_down():
+             status = status | Config.assertions['PACKAGE_DOWN']
+             if self._tomcat_is_down():
+                 status = status | Config.assertions['TOMCAT_DOWN']
+                 if self._server_is_down():
+                     status = status | Config.assertions['SERVER_DOWN']
+         return status
+
+     def _audit_is_down(self):
+         return audit.is_down(host=self._host)

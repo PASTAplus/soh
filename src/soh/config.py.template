@@ -55,7 +55,8 @@ class Config(object):
 
     server_types = {
         'APACHE':
-            [],
+            ['unit.lternet.edu',
+             'vocab.lternet.edu'],
         'APACHE_TOMCAT':
             [],
         'AUDIT':
@@ -86,8 +87,7 @@ class Config(object):
              'package-s.lternet.edu',
              'package-d.lternet.edu',],
         'SERVER':
-            ['unit.lternet.edu',
-             'vocab.lternet.edu'],
+            [],
         'SOLR':
             ['solr.lternet.edu',
              'solr-s.lternet.edu',

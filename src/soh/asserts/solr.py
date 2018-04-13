@@ -21,7 +21,7 @@ def is_down(host=None):
     url = 'http://' + host + ':8983/solr/#/collection1/query'
     assert_is_down = True
     try:
-        r = requests.get(url=url, timeout=5.0)
+        r = requests.get(url=url, allow_redirects=False, timeout=5.0)
         assert_is_down = r.status_code != requests.codes.ok
     except Exception as e:
         logger.error(e)

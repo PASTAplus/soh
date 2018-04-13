@@ -54,42 +54,61 @@ class Config(object):
     }
 
     server_types = {
-        'SERVER': ['unit.lternet.edu',
-                   'vocab.lternet.edu'],
-        'APACHE': ['gmn.edirepository.org',
-                   'gmn-s.edirepository.org',
-                   'gmn.lternet.edu',
-                   'gmn-s.lternet.edu'],
-        'JETTY': ['pasta.lternet.edu',
-                  'pasta-s.lternet.edu',
-                  'pasta-d.lternet.edu'],
-        'TOMCAT': ['package.lternet.edu',
-                   'audit.lternet.edu',
-                   'package-s.lternet.edu',
-                   'audit-s.lternet.edu',
-                   'package-d.lternet.edu',
-                   'audit-d.lternet.edu',],
-        'SOLR': ['solr.lternet.edu',
-                 'solr-s.lternet.edu',
-                 'solr-d.lternet.edu'],
-        'LDAP': ['ldap.edirepository.org',
-                 'ldap.lternet.edu'],
-        'APACHE_TOMCAT': ['portal.edirepository.org',
-                          'portal.lternet.edu',
-                          'portal-s.edirepository.org',
-                          'portal-s.lternet.edu',
-                          'portal-d.edirepository.org',
-                          'portal-d.lternet.edu'],
+        'APACHE':
+            [],
+        'APACHE_TOMCAT':
+            [],
+        'AUDIT':
+            ['audit.lternet.edu',
+             'audit-s.lternet.edu',
+             'audit-d.lternet.edu', ],
+        'GMN':
+            ['gmn.edirepository.org',
+             'gmn-s.edirepository.org',
+             'gmn.lternet.edu',
+             'gmn-s.lternet.edu'],
+        'JETTY':
+            ['pasta.lternet.edu',
+             'pasta-s.lternet.edu',
+             'pasta-d.lternet.edu'],
+        'LDAP':
+            ['ldap.edirepository.org',
+             'ldap.lternet.edu'],
+        'PORTAL':
+            ['portal.edirepository.org',
+             'portal.lternet.edu',
+             'portal-s.edirepository.org',
+             'portal-s.lternet.edu',
+             'portal-d.edirepository.org',
+             'portal-d.lternet.edu'],
+        'PACKAGE':
+            ['package.lternet.edu',
+             'package-s.lternet.edu',
+             'package-d.lternet.edu',],
+        'SERVER':
+            ['unit.lternet.edu',
+             'vocab.lternet.edu'],
+        'SOLR':
+            ['solr.lternet.edu',
+             'solr-s.lternet.edu',
+             'solr-d.lternet.edu'],
+        'TOMCAT':
+            [],
     }
 
     # SOH anti-assertions and corresponding identifiers
     assertions = {
-        'SERVER_DOWN':  1,  # 000001
-        'JETTY_DOWN':   2,  # 000010
-        'TOMCAT_DOWN':  4,  # 000100
-        'SOLR_DOWN':    8,  # 001000
-        'LDAP_DOWN':   16,  # 010000
-        'APACHE_DOWN': 32,  # 100000
+        'SERVER_DOWN': 1,  # 00000000001
+        'JETTY_DOWN': 2,  # 00000000010
+        'TOMCAT_DOWN': 4,  # 00000000100
+        'SOLR_DOWN': 8,  # 00000001000
+        'LDAP_DOWN': 16,  # 00000010000
+        'APACHE_DOWN': 32,  # 00000100000
+        'GMN_DOWN': 64,  # 00001000000
+        'PORTAL_DOWN': 128,  # 00010000000
+        'PACKAGE_DOWN': 256,  # 00100000000
+        'GATEKEEPER_DOWN': 512,  # 01000000000
+        'AUDIT_DOWN': 1024,  # 10000000000
     }
 
     server_assertions = {
@@ -99,5 +118,9 @@ class Config(object):
         'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN'],
         'SOLR': ['SOLR_DOWN', 'SERVER_DOWN'],
         'LDAP': ['LDAP_DOWN', 'SERVER_DOWN'],
-        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN']
+        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
+        'GMN': ['GMN_DOWN', 'APACHE_DOWN', 'SERVER_DOWN'],
+        'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN'],
+        'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
+        'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN']
     }

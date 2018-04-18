@@ -227,7 +227,7 @@ class AuditServer(TomcatServer):
      def check_server(self):
          status = Config.UP
          if self._audit_is_down():
-             status = status | Config.assertions['PACKAGE_DOWN']
+             status = status | Config.assertions['AUDIT_DOWN']
              if self._tomcat_is_down():
                  status = status | Config.assertions['TOMCAT_DOWN']
                  if self._server_is_down():

@@ -10,7 +10,7 @@ docopt==0.6.2
 idna==2.7
 jedi==0.11.1
 ldap3==2.4.1
-paramiko==2.4.1
+paramiko==2.4.2
 parso==0.1.1
 pendulum==1.4.2
 pluggy==0.6.0

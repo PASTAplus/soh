@@ -18,7 +18,7 @@ logger = daiquiri.getLogger('gmn.py: ' + __name__)
 
 
 def is_down(host=None):
-    url = 'https://' + host + '/mn/home'
+    url = 'https://' + host + '/mn/v2/node'
     assert_is_down = True
     try:
         r = requests.get(url=url, allow_redirects=False, timeout=5.0)

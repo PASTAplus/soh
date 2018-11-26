@@ -124,3 +124,7 @@ class Config(object):
         'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
         'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN']
     }
+
+    # Email configuration
+    HOVER_MAIL = 'SUPPORT_EMAIL_ADDRESS'
+    HOVER_PASSWORD = 'SUPPORT_EMAIL_PASSWORD'

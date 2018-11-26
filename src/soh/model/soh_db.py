@@ -17,6 +17,8 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, desc, asc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from soh.config import Config
+
 logger = daiquiri.getLogger('soh_db.py: ' + __name__)
 
 Base = declarative_base()
@@ -50,7 +52,7 @@ class SohStatus(Base):
 
 class SohDb(object):
 
-    def __init__(self, db_name='soh_db.sqlite'):
+    def __init__(self, db_name=Config.db):
         self._db_name = db_name
 
     def connect_soh_db(self):
@@ -88,6 +90,16 @@ class SohDb(object):
         """
         return self.session.query(SohEvent).filter(
             SohEvent.event_id == event_id).one()
+
+    def get_soh_latest_status_by_server(self, server=None):
+        """
+        Return latest status for the given server.
+        :param server:
+        :return: Query or None
+        """
+        return self.session.query(SohStatus).filter(
+            SohStatus.server == server).order_by(
+            desc(SohStatus.event_id)).first()
 
     def get_soh_status_by_event(self, event_id=None):
         """

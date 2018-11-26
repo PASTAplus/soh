@@ -25,6 +25,7 @@ class Config(object):
     db = 'soh_db.sqlite'
 
     UP = 0
+    DOWN = 1
 
     # Servers
     servers = {

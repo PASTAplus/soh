@@ -21,6 +21,9 @@ class Config(object):
     KEY_PATH = 'SSH_KEY_PATH'
     KEY_PASS = 'SSH_KEY_PASSWORD'
 
+    # Database
+    db = 'soh_db.sqlite'
+
     UP = 0
 
     # Servers

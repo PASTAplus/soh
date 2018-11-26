@@ -83,7 +83,10 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=N
 
 
 def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
-    diagnostics = f'{host} @ {timestamp}:\n'
+
+    local_time = timestamp.in_timezone('America/Denver').to_datetime_string()
+
+    diagnostics = f'{host} @ {timestamp} ({local_time} MT):\n'
 
     if status == Config.UP:
         diagnostics += 'Is now OK\n'

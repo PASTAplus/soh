@@ -15,7 +15,7 @@ import smtplib
 
 import daiquiri
 
-from webapp.config import Config
+from soh.config import Config
 
 
 logger = daiquiri.getLogger('mailout: ' + __name__)

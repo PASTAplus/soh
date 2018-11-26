@@ -74,6 +74,9 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None):
         print('{host}: {status}'.format(host=host, status=status))
 
 
+def notify(server, status):
+    pass
+
 def main(argv):
     """
     Performs state of health checks against EDI servers/services.

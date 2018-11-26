@@ -40,14 +40,15 @@ class TestHealthCheck(unittest.TestCase):
     def test_do_diagnostics(self):
         host = 'test.edirepository.org'
         now_utc = pendulum.now('UTC')
+        local_time = now_utc.in_timezone('America/Denver').to_datetime_string()
 
-        expected = f'test.edirepository.org @ {now_utc}:\n\nSERVER DOWN\n\nJETTY DOWN\n\n'
+        expected = f'test.edirepository.org @ {now_utc} ({local_time} MT):\nSERVER DOWN\nJETTY DOWN\n'
         status = Config.assertions['SERVER_DOWN'] | Config.assertions[
             'JETTY_DOWN']
         diagnostic = health_check.do_diagnostics(host, status, now_utc)
         self.assertEqual(expected, diagnostic)
 
-        expected = f'test.edirepository.org @ {now_utc}:\n\nIs now OK\n\n'
+        expected = f'test.edirepository.org @ {now_utc} ({local_time} MT):\nIs now OK\n'
         status = Config.UP
         diagnostic = health_check.do_diagnostics(host, status, now_utc)
         self.assertEqual(expected, diagnostic)

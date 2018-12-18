@@ -69,8 +69,8 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=N
     status = server.check_server()
 
     if notify:
-        prior_status = int(db.get_soh_latest_status_by_server(host).status)
-        if prior_status is not None and prior_status != status:
+        prior_status = db.get_soh_latest_status_by_server(host).status
+        if prior_status is not None and int(prior_status) != status:
             diagnostic = do_diagnostics(host, status, now_utc)
             subject = f'Status change for {host}'
             mailout.send_mail(subject=subject, msg=diagnostic, to=Config.ADMIN_TO)

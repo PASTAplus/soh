@@ -14,7 +14,7 @@
 import setuptools
 
 setuptools.setup(name='pastaplus.soh',
-                 version='2018.11.26',
+                 version='2019.04.26',
                  description='PASTA+ and related services State of Health monitoring',
                  author='PASTA+ project',
                  url='https://github.com/PASTAplus/soh',

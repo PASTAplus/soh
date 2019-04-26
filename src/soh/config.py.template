@@ -55,12 +55,16 @@ class Config(object):
         'LDAP_LTER': 'ldap.lternet.edu',
         'UNIT': 'unit.lternet.edu',
         'VOCAB': 'vocab.lternet.edu',
+        'SEO': 'seo.edirepository.org',
+        'TWEETER': 'tweeter.edirepository.org',
     }
 
     server_types = {
         'APACHE':
             ['unit.lternet.edu',
-             'vocab.lternet.edu'],
+             'vocab.lternet.edu',
+             'seo.edirepository.org',
+             'tweeter.edirepository.org'],
         'APACHE_TOMCAT':
             [],
         'AUDIT':

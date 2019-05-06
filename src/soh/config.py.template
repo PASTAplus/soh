@@ -57,6 +57,7 @@ class Config(object):
         'VOCAB': 'vocab.lternet.edu',
         'SEO': 'seo.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
+        'SPACE': 'space.lternet.edu'
     }
 
     server_types = {
@@ -95,7 +96,7 @@ class Config(object):
              'package-s.lternet.edu',
              'package-d.lternet.edu',],
         'SERVER':
-            [],
+            ['space.lternet.edu'],
         'SOLR':
             ['solr.lternet.edu',
              'solr-s.lternet.edu',

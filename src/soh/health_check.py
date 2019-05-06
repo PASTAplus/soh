@@ -313,6 +313,10 @@ def main(argv):
         do_check(host=host, db=soh_db, event_id=event_id, store=store,
                  quiet=quiet, notify=notify)
 
+        host = Config.servers['SPACE']
+        do_check(host=host, db=soh_db, event_id=event_id, store=store,
+                 quiet=quiet, notify=notify)
+
     elif args['production']:
         host = Config.servers['PASTA']
         do_check(host=host, db=soh_db, event_id=event_id, store=store,

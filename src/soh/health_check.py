@@ -73,7 +73,10 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=N
         if prior_status is not None and int(prior_status.status) != status:
             diagnostic = do_diagnostics(host, status, now_utc)
             subject = f'Status change for {host}'
-            mailout.send_mail(subject=subject, msg=diagnostic, to=Config.ADMIN_TO)
+            try:
+                mailout.send_mail(subject=subject, msg=diagnostic, to=Config.ADMIN_TO)
+            except Exception as e:
+                logger.error(e)
 
     if store:
         db.insert_soh_status(event_id=event_id, server=host, status=str(status),

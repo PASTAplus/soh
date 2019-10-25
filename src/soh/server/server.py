@@ -16,6 +16,7 @@ import daiquiri
 from soh.config import Config
 from soh.asserts import apache
 from soh.asserts import audit
+from soh.asserts import auth
 from soh.asserts import gmn
 from soh.asserts import jetty
 from soh.asserts import ldap
@@ -159,6 +160,25 @@ class ApacheTomcatServer(Server):
 
     def _tomcat_is_down(self):
         return tomcat.is_down(host=self._host)
+
+
+class AuthServer(ApacheServer):
+    """
+    The AuthServer identifies services provided by the EDI Authentication
+    Service.
+    """
+    def check_server(self):
+        status = Config.UP
+        if self._auth_is_down():
+            status = status | Config.assertions['AUTH_DOWN']
+        if self._apache_is_down():
+            status = status | Config.assertions['APACHE_DOWN']
+            if self._server_is_down():
+                status = status | Config.assertions['SERVER_DOWN']
+        return status
+
+    def _auth_is_down(self):
+        return auth.is_down(host=self._host)
 
 
 class GmnServer(Server):

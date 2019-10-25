@@ -24,6 +24,7 @@ from soh.model.soh_db import SohDb
 from soh.server.server import ApacheServer
 from soh.server.server import ApacheTomcatServer
 from soh.server.server import AuditServer
+from soh.server.server import AuthServer
 from soh.server.server import GmnServer
 from soh.server.server import JettyServer
 from soh.server.server import LdapServer
@@ -46,6 +47,8 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=N
         server = ApacheTomcatServer(host=host)
     elif host in Config.server_types['AUDIT']:
         server = AuditServer(host=host)
+    elif host in Config.server_types['AUTH']:
+        server = AuthServer(host=host)
     elif host in Config.server_types['GMN']:
         server = GmnServer(host=host)
     elif host in Config.server_types['JETTY']:
@@ -126,6 +129,9 @@ def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
 
     if status & Config.assertions['AUDIT_DOWN']:
         diagnostics += 'AUDIT DOWN\n'
+
+    if status & Config.assertions['AUTH_DOWN']:
+        diagnostics += 'AUTH DOWN\n'
 
     return diagnostics
 
@@ -317,6 +323,10 @@ def main(argv):
                  quiet=quiet, notify=notify)
 
         host = Config.servers['SPACE']
+        do_check(host=host, db=soh_db, event_id=event_id, store=store,
+                 quiet=quiet, notify=notify)
+
+        host = Config.servers['AUTH']
         do_check(host=host, db=soh_db, event_id=event_id, store=store,
                  quiet=quiet, notify=notify)
 

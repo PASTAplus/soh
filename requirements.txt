@@ -9,7 +9,7 @@ cffi               1.13.0
 chardet            3.0.4     
 cryptography       2.8       
 daiquiri           1.6.0     
-docopt             0.6.1     
+docopt             0.6.2     
 idna               2.8       
 importlib-metadata 0.23      
 ldap3              2.6.1     

@@ -115,7 +115,7 @@ class Config(object):
         'TOMCAT_DOWN': 4,  # 00000000100
         'SOLR_DOWN': 8,  # 00000001000
         'LDAP_DOWN': 16,  # 00000010000
-        'WEB_DOWN': 32,  # 00000100000
+        'APACHE_DOWN': 32,  # 00000100000
         'GMN_DOWN': 64,  # 00001000000
         'PORTAL_DOWN': 128,  # 00010000000
         'PACKAGE_DOWN': 256,  # 00100000000

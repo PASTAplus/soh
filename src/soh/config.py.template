@@ -51,6 +51,7 @@ class Config(object):
         'GMN_S_LTER': 'gmn-s.lternet.edu',
         'GMN_EDI': 'gmn.edirepository.org',
         'GMN_S_EDI': 'gmn-s.edirepository.org',
+        'AUTH': 'auth.edirepository.org',
         'LDAP_EDI': 'ldap.edirepository.org',
         'LDAP_LTER': 'ldap.lternet.edu',
         'UNIT': 'unit.lternet.edu',
@@ -72,6 +73,8 @@ class Config(object):
             ['audit.lternet.edu',
              'audit-s.lternet.edu',
              'audit-d.lternet.edu', ],
+        'AUTH':
+            ['auth.edirepository.org'],
         'GMN':
             ['gmn.edirepository.org',
              'gmn-s.edirepository.org',
@@ -112,12 +115,13 @@ class Config(object):
         'TOMCAT_DOWN': 4,  # 00000000100
         'SOLR_DOWN': 8,  # 00000001000
         'LDAP_DOWN': 16,  # 00000010000
-        'APACHE_DOWN': 32,  # 00000100000
+        'WEB_DOWN': 32,  # 00000100000
         'GMN_DOWN': 64,  # 00001000000
         'PORTAL_DOWN': 128,  # 00010000000
         'PACKAGE_DOWN': 256,  # 00100000000
         'GATEKEEPER_DOWN': 512,  # 01000000000
         'AUDIT_DOWN': 1024,  # 10000000000
+        'AUTH_DOWN': 2048,  # 100000000000
     }
 
     server_assertions = {
@@ -132,6 +136,7 @@ class Config(object):
         'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN'],
         'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
         'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN']
+        'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN']
     }
 
     # Email configuration

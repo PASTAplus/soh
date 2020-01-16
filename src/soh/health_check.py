@@ -13,6 +13,7 @@
 """
 import sys
 
+import click
 import daiquiri
 from docopt import docopt
 import pendulum
@@ -136,59 +137,32 @@ def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
     return diagnostics
 
 
-def main(argv):
+help_store = "Store results in SOH database"
+help_quiet = "No stdout"
+help_notify = "Send email notification of server status change"
+
+
+@click.command()
+@click.argument('hosts', nargs=-1)
+@click.option('-s', '--store', default=False, is_flag=True, help=help_store)
+@click.option('-q', '--quiet', default=False, is_flag=True, help=help_quiet)
+@click.option('-n', '--notify', default=False, is_flag=True, help=help_notify)
+def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     """
     Performs state of health checks against EDI servers/services.
 
-    Usage:
-        health_check.py all [-s | --store] [-q | --quiet] [-n | --notify]
-        health_check.py production [-p | --portal] [-g | --gmn] [-s | --store]
-            [-q | --quiet] [-n | --notify]
-        health_check.py staging [-p | --portal] [-g | --gmn] [-s | --store]
-            [-q | --quiet] [-n | --notify]
-        health_check.py development [-p | --portal] [-s | --store]
-            [-q | --quiet] [-n | --notify]
-        health_check.py server <server> [-p | --portal] [-s | --store]
-            [-q | --quiet] [-n | --notify]
-        health_check.py -h | --help
+    \b
+    HOSTS: space separated list of hosts
 
-    Arguments:
-        all         Exam all servers
-        production  Examine production tier servers
-        staging     Examine staging tier servers
-        development Examine development tier servers
-        server      Examine specified server
-
-    Options:
-        -h --help       This page
-        -p --portal     Include portals in exam
-        -g --gmn        Include GMNs in exam (only production and staging)
-        -s --store      Store results in SOH database
-        -q --quiet      No stdout
-        -n --notify     Send email notification of server status change
     """
-    args = docopt(str(main.__doc__))
 
-    lock = Lock('/tmp/pastaplus_soh.lock')
+    lock = Lock(Config.LOCK_FILE)
     if lock.locked:
         logger.error('Lock file {} exists, exiting...'.format(lock.lock_file))
         return 1
     else:
         lock.acquire()
         logger.info('Lock file {} acquired'.format(lock.lock_file))
-
-    # Store results in database
-    store = False
-    if args['--store']:
-        store = True
-
-    quiet = False
-    if args['--quiet']:
-        quiet = True
-        
-    notify = False
-    if args['--notify']:
-        notify = True
 
     soh_db = SohDb()
     soh_db.connect_soh_db()
@@ -209,227 +183,13 @@ def main(argv):
             logger.info('Lock file {} released'.format(lock.lock_file))
             return 1
 
-    if args['all']:
-        host = Config.servers['PASTA']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PASTA_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PASTA_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_S_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_D_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_S_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PORTAL_D_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['GMN_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['GMN_S_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['GMN_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['GMN_S_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['LDAP_EDI']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['LDAP_LTER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['UNIT']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['VOCAB']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SEO']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['TWEETER']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SPACE']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUTH']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-    elif args['production']:
-        host = Config.servers['PASTA']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        if args['--portal']:
-            host = Config.servers['PORTAL_LTER']
+    if len(hosts) == 0:
+        msg = "No hosts specified"
+        logger.warning(msg)
+    else:
+        for host in hosts:
             do_check(host=host, db=soh_db, event_id=event_id, store=store,
                      quiet=quiet, notify=notify)
-
-            host = Config.servers['PORTAL_EDI']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-        if args['--gmn']:
-            host = Config.servers['GMN_LTER']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-            host = Config.servers['GMN_EDI']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-    elif args['staging']:
-        host = Config.servers['PASTA_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR_S']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        if args['--portal']:
-            host = Config.servers['PORTAL_S_LTER']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-            host = Config.servers['PORTAL_S_EDI']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-        if args['--gmn']:
-            host = Config.servers['GMN_S_LTER']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-            host = Config.servers['GMN_S_EDI']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-    elif args['development']:
-        host = Config.servers['PASTA_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['PACKAGE_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['AUDIT_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        host = Config.servers['SOLR_D']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
-
-        if args['--portal']:
-            host = Config.servers['PORTAL_D_LTER']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-            host = Config.servers['PORTAL_D_EDI']
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
-
-    elif args['server']:
-        host = args['<server>']
-        do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                 quiet=quiet, notify=notify)
 
     lock.release()
     logger.info('Lock file {} released'.format(lock.lock_file))
@@ -438,4 +198,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()

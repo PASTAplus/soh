@@ -113,3 +113,4 @@ ENV/
 config.py
 properties.py
 settings.py
+*.pkl

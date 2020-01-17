@@ -158,7 +158,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
 
     local_tz = pendulum.now().timezone_name
     now_utc = pendulum.now('UTC')
-    status["event_timestamp"] = now_utc
+    status["event_timestamp"] = now_utc.isoformat()
 
     event_id = None
     if store:
@@ -178,7 +178,6 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         logger.warning(msg)
     else:
         for host in hosts:
-            status_time = pendulum.now('UTC')
             host_status = do_check(host=host)
             if notify:
                 prior_status = soh_db.get_soh_latest_status_by_server(host)
@@ -193,11 +192,11 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
             if store:
                 soh_db.insert_soh_status(event_id=event_id, server=host,
                                          status=str(host_status), timestamp=now_utc)
-                status[host] = (status_time, host_status)
+                status[host] = host_status
                 with open(Config.STATUS_FILE, "wb") as f:
                     pickle.dump(status, f)
             if not quiet:
-                print(f'{host} - {status_time.isoformat()}: {host_status}')
+                print(f'{host}: {host_status}')
 
     lock.release()
     logger.info('Lock file {} released'.format(lock.lock_file))

@@ -11,8 +11,10 @@
 :Created:
     3/16/18
 """
+import logging
 import os
 import pickle
+import sys
 
 import click
 import daiquiri
@@ -34,6 +36,10 @@ from soh.server.server import PortalServer
 from soh.server.server import Server
 from soh.server.server import SolrServer
 from soh.server.server import TomcatServer
+
+cwd = os.path.dirname(os.path.realpath(__file__))
+logfile = cwd + "/health_check.log"
+daiquiri.setup(level=logging.INFO, outputs=(daiquiri.output.File(logfile), "stdout",))
 
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
@@ -139,11 +145,12 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     HOSTS: space separated list of hosts
 
     """
+    new_status = dict()
     if os.path.exists(Config.STATUS_FILE):
         with open(Config.STATUS_FILE, "rb") as f:
-            status = pickle.load(f)
+            old_status = pickle.load(f)
     else:
-        status = dict()
+        old_status = dict()
 
     lock = Lock(Config.LOCK_FILE)
     if lock.locked:
@@ -158,7 +165,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
 
     local_tz = pendulum.now().timezone_name
     now_utc = pendulum.now('UTC')
-    status["event_timestamp"] = now_utc.isoformat()
+    new_status["timestamp"] = now_utc.isoformat()
 
     event_id = None
     if store:
@@ -180,9 +187,10 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         for host in hosts:
             host_status = do_check(host=host)
             if notify:
-                if status[host] != host_status:
+                if host not in old_status or old_status[host] != host_status:
                     diagnostic = do_diagnostics(host, host_status, now_utc)
                     subject = f'Status change for {host}'
+                    logger.warning(diagnostic)
                     try:
                         mailout.send_mail(subject=subject, msg=diagnostic,
                                           to=Config.ADMIN_TO)
@@ -191,16 +199,16 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
             if store:
                 soh_db.insert_soh_status(event_id=event_id, server=host,
                                          status=str(host_status), timestamp=now_utc)
-                status[host] = host_status
+                new_status[host] = host_status
                 with open(Config.STATUS_FILE, "wb") as f:
-                    pickle.dump(status, f)
+                    pickle.dump(new_status, f)
             if not quiet:
                 print(f'{host}: {host_status}')
 
     lock.release()
     logger.info('Lock file {} released'.format(lock.lock_file))
 
-    return 0
+    sys.exit(0)
 
 
 if __name__ == "__main__":

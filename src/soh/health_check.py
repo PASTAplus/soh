@@ -180,8 +180,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         for host in hosts:
             host_status = do_check(host=host)
             if notify:
-                prior_status = soh_db.get_soh_latest_status_by_server(host)
-                if prior_status is not None and int(prior_status.status) != status:
+                if status[host] != host_status:
                     diagnostic = do_diagnostics(host, host_status, now_utc)
                     subject = f'Status change for {host}'
                     try:

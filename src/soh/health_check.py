@@ -11,11 +11,11 @@
 :Created:
     3/16/18
 """
-import sys
+import os
+import pickle
 
 import click
 import daiquiri
-from docopt import docopt
 import pendulum
 
 from soh.config import Config
@@ -38,7 +38,7 @@ from soh.server.server import TomcatServer
 logger = daiquiri.getLogger('health_check.py: ' + __name__)
 
 
-def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=None):
+def do_check(host=None):
     now_utc = pendulum.now('UTC')
 
     server = None
@@ -67,30 +67,14 @@ def do_check(host=None, db=None, event_id=None, store=None, quiet=None, notify=N
     elif host in Config.server_types['TOMCAT']:
         server = TomcatServer(host=host)
     else:
-        logger.error('Unknown server: {host}'.format(host=host))
+        logger.error(f'Unknown server: {host}')
         return
 
     status = server.check_server()
-
-    if notify:
-        prior_status = db.get_soh_latest_status_by_server(host)
-        if prior_status is not None and int(prior_status.status) != status:
-            diagnostic = do_diagnostics(host, status, now_utc)
-            subject = f'Status change for {host}'
-            try:
-                mailout.send_mail(subject=subject, msg=diagnostic, to=Config.ADMIN_TO)
-            except Exception as e:
-                logger.error(e)
-
-    if store:
-        db.insert_soh_status(event_id=event_id, server=host, status=str(status),
-                             timestamp=now_utc)
-    if not quiet:
-        print('{host}: {status}'.format(host=host, status=status))
+    return status
 
 
 def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
-
     local_time = timestamp.in_timezone('America/Denver').to_datetime_string()
 
     diagnostics = f'{host} @ {timestamp} ({local_time} MT):\n'
@@ -155,6 +139,11 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     HOSTS: space separated list of hosts
 
     """
+    if os.path.exists(Config.STATUS_FILE):
+        with open(Config.STATUS_FILE, "rb") as f:
+            status = pickle.load(f)
+    else:
+        status = dict()
 
     lock = Lock(Config.LOCK_FILE)
     if lock.locked:
@@ -169,6 +158,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
 
     local_tz = pendulum.now().timezone_name
     now_utc = pendulum.now('UTC')
+    status["event_timestamp"] = now_utc
 
     event_id = None
     if store:
@@ -188,8 +178,26 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         logger.warning(msg)
     else:
         for host in hosts:
-            do_check(host=host, db=soh_db, event_id=event_id, store=store,
-                     quiet=quiet, notify=notify)
+            status_time = pendulum.now('UTC')
+            host_status = do_check(host=host)
+            if notify:
+                prior_status = soh_db.get_soh_latest_status_by_server(host)
+                if prior_status is not None and int(prior_status.status) != status:
+                    diagnostic = do_diagnostics(host, host_status, now_utc)
+                    subject = f'Status change for {host}'
+                    try:
+                        mailout.send_mail(subject=subject, msg=diagnostic,
+                                          to=Config.ADMIN_TO)
+                    except Exception as e:
+                        logger.error(e)
+            if store:
+                soh_db.insert_soh_status(event_id=event_id, server=host,
+                                         status=str(host_status), timestamp=now_utc)
+                status[host] = (status_time, host_status)
+                with open(Config.STATUS_FILE, "wb") as f:
+                    pickle.dump(status, f)
+            if not quiet:
+                print(f'{host} - {status_time.isoformat()}: {host_status}')
 
     lock.release()
     logger.info('Lock file {} released'.format(lock.lock_file))

@@ -125,6 +125,9 @@ def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
     if status & Config.assertions["AUTH_DOWN"]:
         diagnostics += "AUTH DOWN\n"
 
+    if status & Config.assertions["SYNC_DOWN"]:
+        diagnostics += "SYNC DOWN\n"
+
     return diagnostics
 
 

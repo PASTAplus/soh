@@ -24,6 +24,7 @@ from soh.asserts import package
 from soh.asserts import portal
 from soh.asserts import server
 from soh.asserts import solr
+from soh.asserts import sync
 from soh.asserts import tomcat
 
 logger = daiquiri.getLogger('server.py: ' + __name__)
@@ -189,12 +190,14 @@ class GmnServer(Server):
 
     def check_server(self):
         status = Config.UP
-        if self._gmn_is_down():
-            status = status | Config.assertions['GMN_DOWN']
-            if self._apache_is_down():
-                status = status | Config.assertions['APACHE_DOWN']
-                if self._server_is_down():
-                    status = status | Config.assertions['SERVER_DOWN']
+        if self._sync_is_down():
+            status = status | Config.assertions['SYNC_DOWN']
+            if self._gmn_is_down():
+                status = status | Config.assertions['GMN_DOWN']
+                if self._apache_is_down():
+                    status = status | Config.assertions['APACHE_DOWN']
+                    if self._server_is_down():
+                        status = status | Config.assertions['SERVER_DOWN']
         return status
 
     def _apache_is_down(self):
@@ -202,6 +205,9 @@ class GmnServer(Server):
 
     def _gmn_is_down(self):
         return gmn.is_down(host=self._host)
+
+    def _sync_is_down(self):
+        return sync.is_down(host=self._host)
 
 
 class PortalServer(ApacheTomcatServer):

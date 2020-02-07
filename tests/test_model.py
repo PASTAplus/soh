@@ -44,7 +44,7 @@ class TestModel(unittest.TestCase):
         event_id = self._soh_db.get_soh_latest_event().event_id
         event_time = self._soh_db.get_soh_event_timestamp(
             event_id=event_id).timestamp
-        self.assertEqual(now_utc, event_time)
+        self.assertEqual(now_utc.toordinal(), event_time.toordinal())
 
     def test_status(self):
         now_utc = pendulum.now('UTC')

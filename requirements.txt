@@ -14,9 +14,10 @@ ldap3==2.6.1
 more-itertools==8.0.2
 packaging==20.0
 paramiko==2.6.0
--e git+git@github.com:PASTAplus/soh.git@2c6c36d79f48f47f53e912acd5bb50127498bca6#egg=pastaplus.soh&subdirectory=src
+-e git+git@github.com:PASTAplus/soh.git@aa62243cbe4f4dc52e0b8d04512e71cda8c80e4f#egg=pastaplus.soh&subdirectory=src
 pendulum==2.0.5
 pluggy==0.13.1
+psycopg2==2.8.4
 py==1.8.1
 pyasn1==0.4.8
 pycparser==2.19

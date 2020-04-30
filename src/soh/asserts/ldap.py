@@ -24,7 +24,7 @@ def is_down(host=None):
     server = Server(host, use_ssl=True, get_info=ALL)
     assert_is_down = True
     try:
-        conn = Connection(server, auto_bind=True, receive_timeout=Config.TIMEOUT)
+        conn = Connection(server, auto_bind=True, receive_timeout=15)
         if conn.result['result'] == Config.UP:
             assert_is_down = False
     except Exception as e:

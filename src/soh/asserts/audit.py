@@ -23,6 +23,9 @@ def is_down(host=None):
     try:
         r = requests.get(url=url, allow_redirects=False, timeout=5.0)
         assert_is_down = r.status_code != requests.codes.ok
+        if assert_is_down:
+            msg = f"{__file__}: Status code is {r.status_code}"
+            logger.warning(msg)
     except Exception as e:
         logger.error(e)
     return assert_is_down

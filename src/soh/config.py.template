@@ -168,4 +168,4 @@ class Config(object):
         'gmn-s.lternet.edu': 'DB_HOST'
     }
 
-
+    TIMEOUT = 15.0

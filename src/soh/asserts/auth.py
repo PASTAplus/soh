@@ -14,13 +14,17 @@
 import daiquiri
 import requests
 
+from soh.config import Config
+
+
 logger = daiquiri.getLogger('auth.py: ' + __name__)
+
 
 def is_down(host=None):
     url = 'https://' + host + '/auth/accept'
     assert_is_down = True
     try:
-        r = requests.get(url=url, allow_redirects=False, timeout=5.0)
+        r = requests.get(url=url, allow_redirects=False, timeout=Config.TIMEOUT)
         # Assert down only for server error and higher
         assert_is_down = r.status_code != requests.codes.bad
         if assert_is_down:

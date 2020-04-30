@@ -14,6 +14,9 @@
 import daiquiri
 import requests
 
+from soh.config import Config
+
+
 logger = daiquiri.getLogger('solr.py: ' + __name__)
 
 
@@ -21,7 +24,7 @@ def is_down(host=None):
     url = 'http://' + host + ':8983/solr/#/collection1/query'
     assert_is_down = True
     try:
-        r = requests.get(url=url, allow_redirects=False, timeout=5.0)
+        r = requests.get(url=url, allow_redirects=False, timeout=Config.TIMEOUT)
         assert_is_down = r.status_code != requests.codes.ok
         if assert_is_down:
             msg = f"{__file__}: Status code is {r.status_code}"

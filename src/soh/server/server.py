@@ -150,10 +150,10 @@ class ApacheTomcatServer(Server):
         status = Config.UP
         if self._tomcat_is_down():
             status = status | Config.assertions['TOMCAT_DOWN']
-        if self._apache_is_down():
-            status = status | Config.assertions['APACHE_DOWN']
-            if self._server_is_down():
-                status = status | Config.assertions['SERVER_DOWN']
+            if self._apache_is_down():
+                status = status | Config.assertions['APACHE_DOWN']
+                if self._server_is_down():
+                    status = status | Config.assertions['SERVER_DOWN']
         return status
 
     def _apache_is_down(self):
@@ -172,10 +172,10 @@ class AuthServer(ApacheServer):
         status = Config.UP
         if self._auth_is_down():
             status = status | Config.assertions['AUTH_DOWN']
-        if self._apache_is_down():
-            status = status | Config.assertions['APACHE_DOWN']
-            if self._server_is_down():
-                status = status | Config.assertions['SERVER_DOWN']
+            if self._apache_is_down():
+                status = status | Config.assertions['APACHE_DOWN']
+                if self._server_is_down():
+                    status = status | Config.assertions['SERVER_DOWN']
         return status
 
     def _auth_is_down(self):

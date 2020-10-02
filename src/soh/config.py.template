@@ -61,7 +61,8 @@ class Config(object):
         'VOCAB': 'vocab.lternet.edu',
         'SEO': 'seo.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
-        'SPACE': 'space.lternet.edu'
+        'SPACE': 'space.lternet.edu',
+        'EZEML': 'ezeml.edirepository.org'
     }
 
     server_types = {
@@ -69,6 +70,7 @@ class Config(object):
             ['unit.lternet.edu',
              'vocab.lternet.edu',
              'seo.edirepository.org',
+             'ezeml.edirepository.org',
              'tweeter.edirepository.org'],
         'APACHE_TOMCAT':
             [],

@@ -44,9 +44,6 @@ class Config(object):
         'PACKAGE_D': 'package-d.lternet.edu',
         'AUDIT_D': 'audit-d.lternet.edu',
         'SOLR_D': 'solr-d.lternet.edu',
-        'PORTAL_LTER': 'portal.lternet.edu',
-        'PORTAL_S_LTER': 'portal-s.lternet.edu',
-        'PORTAL_D_LTER': 'portal-d.lternet.edu',
         'PORTAL_EDI': 'portal.edirepository.org',
         'PORTAL_S_EDI': 'portal-s.edirepository.org',
         'PORTAL_D_EDI': 'portal-d.edirepository.org',
@@ -94,11 +91,8 @@ class Config(object):
              'ldap.lternet.edu'],
         'PORTAL':
             ['portal.edirepository.org',
-             'portal.lternet.edu',
              'portal-s.edirepository.org',
-             'portal-s.lternet.edu',
-             'portal-d.edirepository.org',
-             'portal-d.lternet.edu'],
+             'portal-d.edirepository.org'],
         'PACKAGE':
             ['package.lternet.edu',
              'package-s.lternet.edu',

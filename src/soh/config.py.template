@@ -155,7 +155,7 @@ class Config(object):
     DB_USER = 'DB_USER'
     DB_PW = 'SECRET_PASSWORD'
     DB_DB = 'pasta'
-    DB_DRIVER = 'postgres+psycopg2'
+    DB_DRIVER = 'postgresql+psycopg2'
 
     gmn_pasta_db_host_mapping = {
         'gmn.edirepository.org': 'DB_HOST',

@@ -14,4 +14,5 @@ dependencies:
   - ldap3=2.6.1
   - psycopg2=2.8.4
   - cryptography=3.2.1
+  - daiquiri=2.0.0
 prefix: /home/servilla/anaconda3/envs/soh

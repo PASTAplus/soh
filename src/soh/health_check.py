@@ -140,9 +140,10 @@ def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
 
 def get_load(uptime: str):
     load = None
-    match = re.search(r"\d?\d\.\d\d, \d?\d\.\d\d, \d?\d\.\d\d", uptime)
-    if match:
-        load = [float(_.strip()) for _ in match.group().split(",")]
+    if uptime is not None:
+        match = re.search(r"\d?\d\.\d\d, \d?\d\.\d\d, \d?\d\.\d\d", uptime)
+        if match:
+            load = [float(_.strip()) for _ in match.group().split(",")]
     return load
 
 

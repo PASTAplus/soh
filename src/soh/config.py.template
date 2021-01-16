@@ -116,34 +116,35 @@ class Config(object):
 
     # SOH anti-assertions and corresponding identifiers
     assertions = {
-        'SERVER_DOWN': 1,        # 0000000000001
-        'JETTY_DOWN': 2,         # 0000000000010
-        'TOMCAT_DOWN': 4,        # 0000000000100
-        'SOLR_DOWN': 8,          # 0000000001000
-        'LDAP_DOWN': 16,         # 0000000010000
-        'APACHE_DOWN': 32,       # 0000000100000
-        'GMN_DOWN': 64,          # 0000001000000
-        'PORTAL_DOWN': 128,      # 0000010000000
-        'PACKAGE_DOWN': 256,     # 0000100000000
-        'GATEKEEPER_DOWN': 512,  # 0001000000000
-        'AUDIT_DOWN': 1024,      # 0010000000000
-        'AUTH_DOWN': 2048,       # 0100000000000
-        'SYNC_DOWN': 4096,       # 1000000000000
+        'SERVER_DOWN': 1,        # 00000000000001
+        'JETTY_DOWN': 2,         # 00000000000010
+        'TOMCAT_DOWN': 4,        # 00000000000100
+        'SOLR_DOWN': 8,          # 00000000001000
+        'LDAP_DOWN': 16,         # 00000000010000
+        'APACHE_DOWN': 32,       # 00000000100000
+        'GMN_DOWN': 64,          # 00000001000000
+        'PORTAL_DOWN': 128,      # 00000010000000
+        'PACKAGE_DOWN': 256,     # 00000100000000
+        'GATEKEEPER_DOWN': 512,  # 00001000000000
+        'AUDIT_DOWN': 1024,      # 00010000000000
+        'AUTH_DOWN': 2048,       # 00100000000000
+        'SYNC_DOWN': 4096,       # 01000000000000
+        'LOAD_HIGH': 8192,       # 10000000000000
     }
 
     server_assertions = {
-        'SERVER': ['SERVER_DOWN'],
-        'APACHE': ['APACHE_DOWN', 'SERVER_DOWN'],
-        'JETTY': ['JETTY_DOWN', 'SERVER_DOWN'],
-        'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN'],
-        'SOLR': ['SOLR_DOWN', 'SERVER_DOWN'],
-        'LDAP': ['LDAP_DOWN', 'SERVER_DOWN'],
-        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
-        'GMN': ['SYNC_DOWN', 'GMN_DOWN', 'APACHE_DOWN', 'SERVER_DOWN'],
-        'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN'],
-        'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
-        'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN'],
-        'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN']
+        'SERVER': ['SERVER_DOWN', 'LOAD_HIGH'],
+        'APACHE': ['APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'JETTY': ['JETTY_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'SOLR': ['SOLR_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'LDAP': ['LDAP_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'GMN': ['SYNC_DOWN', 'GMN_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
+        'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH']
     }
 
     # Email configuration
@@ -165,3 +166,5 @@ class Config(object):
     }
 
     TIMEOUT = 15.0
+    LOAD1_MAX = 5.00
+    SLEEP = 4

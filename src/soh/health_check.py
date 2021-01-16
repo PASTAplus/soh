@@ -14,7 +14,10 @@
 import logging
 import os
 import pickle
+import re
 import sys
+import time
+from typing import List
 
 import click
 import daiquiri
@@ -23,6 +26,7 @@ import pendulum
 from soh.config import Config
 from soh.lock import Lock
 from soh import mailout
+from soh.asserts import server
 from soh.model.soh_db import SohDb
 from soh.server.server import ApacheServer
 from soh.server.server import ApacheTomcatServer
@@ -39,7 +43,7 @@ from soh.server.server import TomcatServer
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/health_check.log"
-daiquiri.setup(level=logging.INFO, outputs=(daiquiri.output.File(logfile),
+daiquiri.setup(level=logging.WARN, outputs=(daiquiri.output.File(logfile),
                                             "stdout"))
 
 logger = daiquiri.getLogger("health_check.py: " + __name__)
@@ -128,7 +132,31 @@ def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
     if status & Config.assertions["SYNC_DOWN"]:
         diagnostics += "SYNC DOWN\n"
 
+    if status & Config.assertions["LOAD_HIGH"]:
+        diagnostics += "LOAD HIGH\n"
+
     return diagnostics
+
+
+def get_load(uptime: str):
+    load = None
+    match = re.search(r"\d?\d\.\d\d, \d?\d\.\d\d, \d?\d\.\d\d", uptime)
+    if match:
+        load = [float(_.strip()) for _ in match.group().split(",")]
+    return load
+
+
+def load_status(load: List) -> int:
+    status = Config.UP
+    if load is None:
+        status = Config.assertions["LOAD_HIGH"]
+    else:
+        load1 = load[0]
+        load5 = load[1]
+        load15 = load[2]
+        if load1 >= Config.LOAD1_MAX:
+            status = Config.assertions["LOAD_HIGH"]
+    return status
 
 
 help_store = "Store results in SOH database"
@@ -158,11 +186,19 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
 
     lock = Lock(Config.LOCK_FILE)
     if lock.locked:
-        logger.error("Lock file {} exists, exiting...".format(lock.lock_file))
+        msg = f"Lock file {lock.lock_file} exists, exiting..."
+        logger.error(msg)
+        try:
+            subject = f"Dashboard: Lock file {lock.lock_file} exists..."
+            mailout.send_mail(
+                subject=subject, msg=msg, to=Config.ADMIN_TO
+            )
+        except Exception as e:
+            logger.error(e)
         return 1
     else:
         lock.acquire()
-        logger.info("Lock file {} acquired".format(lock.lock_file))
+        logger.info(f"Lock file {lock.lock_file} acquired")
 
     soh_db = SohDb()
     soh_db.connect_soh_db()
@@ -177,8 +213,15 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     else:
         for host in hosts:
             host_status = do_check(host=host)
+            host_uptime = server.uptime(
+                host=host,
+                user=Config.USER,
+                key_path=Config.KEY_PATH,
+                key_pass=Config.KEY_PASS
+            )
+            host_status = host_status | load_status(get_load(host_uptime))
             if notify:
-                if host not in old_status or old_status[host] != host_status:
+                if host not in old_status or old_status[host][0] != host_status:
                     diagnostic = do_diagnostics(host, host_status, now_utc)
                     subject = f"Status change for {host}"
                     logger.warning(diagnostic)
@@ -189,12 +232,12 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
                     except Exception as e:
                         logger.error(e)
             if store:
-                new_status[host] = host_status
+                new_status[host] = (host_status, host_uptime)
                 with open(Config.STATUS_FILE, "wb") as f:
                     pickle.dump(new_status, f)
             if not quiet:
-                print(f"{host}: {host_status}")
-
+                print(f"{host}: {host_status} - {host_uptime}")
+            time.sleep(Config.SLEEP)
     lock.release()
     logger.info("Lock file {} released".format(lock.lock_file))
 

@@ -85,10 +85,11 @@ def do_check(host=None):
     return status
 
 
-def do_diagnostics(host: str, status: int, timestamp: pendulum.datetime) -> str:
+def do_diagnostics(host: str, status: int, uptime: str, timestamp: pendulum.datetime) -> str:
     local_time = timestamp.in_timezone("America/Denver").to_datetime_string()
 
     diagnostics = f"{host} @ {timestamp} ({local_time} MT):\n"
+    diagnostics += f"Uptime: {uptime}\n"
 
     if status == Config.UP:
         diagnostics += "Is now OK\n"
@@ -220,10 +221,11 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
                 key_path=Config.KEY_PATH,
                 key_pass=Config.KEY_PASS
             )
-            host_status = host_status | load_status(get_load(host_uptime))
+            if host_uptime is not None:
+                host_status = host_status | load_status(get_load(host_uptime))
             if notify:
                 if host not in old_status or old_status[host][0] != host_status:
-                    diagnostic = do_diagnostics(host, host_status, now_utc)
+                    diagnostic = do_diagnostics(host, host_status, host_uptime, now_utc)
                     subject = f"Status change for {host}"
                     logger.warning(diagnostic)
                     try:

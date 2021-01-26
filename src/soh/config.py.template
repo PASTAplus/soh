@@ -59,6 +59,7 @@ class Config(object):
         'SEO': 'seo.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
         'SPACE': 'space.lternet.edu',
+        'JOSH': 'josh.lternet.edu',
         'EZEML': 'ezeml.edirepository.org'
     }
 
@@ -98,7 +99,8 @@ class Config(object):
              'package-s.lternet.edu',
              'package-d.lternet.edu'],
         'SERVER':
-            ['space.lternet.edu'],
+            ['space.lternet.edu',
+             'josh.lternet.edu'],
         'SOLR':
             ['solr.lternet.edu',
              'solr-s.lternet.edu',

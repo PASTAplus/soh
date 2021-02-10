@@ -23,12 +23,11 @@ from soh.config import Config
 from soh import health_check
 from soh.model.soh_db import SohDb
 
-sys.path.insert(0, os.path.abspath('../src'))
-logger = daiquiri.getLogger('test_health: ' + __name__)
+sys.path.insert(0, os.path.abspath("../src"))
+logger = daiquiri.getLogger("test_health: " + __name__)
 
 
 class TestHealthCheck(unittest.TestCase):
-
     def setUp(self):
         self._soh_db = SohDb()
         self._soh_db.connect_soh_db()
@@ -38,21 +37,31 @@ class TestHealthCheck(unittest.TestCase):
             os.remove(Config.db)
 
     def test_do_diagnostics(self):
-        host = 'test.edirepository.org'
-        now_utc = pendulum.now('UTC')
-        local_time = now_utc.in_timezone('America/Denver').to_datetime_string()
+        host = "test.edirepository.org"
+        now_utc = pendulum.now("UTC")
+        local_time = now_utc.in_timezone("America/Denver").to_datetime_string()
+        host_uptime = (
+            "'15:21:44 up 6 days, 20:11,  0 users,  load average: 0.00, 0.00, 0.00'"
+        )
 
-        expected = f'test.edirepository.org @ {now_utc} ({local_time} MT):\nSERVER DOWN\nJETTY DOWN\n'
-        status = Config.assertions['SERVER_DOWN'] | Config.assertions[
-            'JETTY_DOWN']
-        diagnostic = health_check.do_diagnostics(host, status, now_utc)
+        expected = (
+            f"test.edirepository.org @ {now_utc} ({local_time} MT):\n"
+            f"Uptime: '15:21:44 up 6 days, 20:11,  0 users,  load average: 0.00, 0.00, 0.00'\n"
+            f"SERVER DOWN\nJETTY DOWN\n"
+        )
+        status = Config.assertions["SERVER_DOWN"] | Config.assertions["JETTY_DOWN"]
+        diagnostic = health_check.do_diagnostics(host, status, host_uptime, now_utc)
         self.assertEqual(expected, diagnostic)
 
-        expected = f'test.edirepository.org @ {now_utc} ({local_time} MT):\nIs now OK\n'
+        expected = (
+            f"test.edirepository.org @ {now_utc} ({local_time} MT):\n"
+            f"Uptime: '15:21:44 up 6 days, 20:11,  0 users,  load average: 0.00, 0.00, 0.00'\n"
+            f"Is now OK\n"
+        )
         status = Config.UP
-        diagnostic = health_check.do_diagnostics(host, status, now_utc)
+        diagnostic = health_check.do_diagnostics(host, status, host_uptime, now_utc)
         self.assertEqual(expected, diagnostic)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

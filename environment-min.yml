@@ -4,15 +4,16 @@ channels:
   - defaults
 dependencies:
   - python=3.8
+  - requests
+  - pendulum
   - paramiko
   - click
-  - pytzdata
-  - pendulum
-  - sqlalchemy
-  - pytest
-  - requests
-  - ldap3
   - psycopg2
+  - sqlalchemy
+  - python=3.8
   - cryptography
+  - pytest
+  - ldap3
   - daiquiri
+  - pytzdata
 prefix: /home/servilla/anaconda3/envs/soh

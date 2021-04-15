@@ -25,17 +25,18 @@ def send_mail(subject=None, msg=None, to=None):
     result = False
     # Convert subject and msg to byte array
     body = ('Subject: ' + subject + '\n').encode() + \
-           ('To: ' + to + '\n').encode() + \
+           ('To: ' + ",".join(to) + '\n').encode() + \
            ('From: ' + Config.HOVER_MAIL + '\n\n').encode() + \
            (msg + '\n').encode()
 
-    smtpObj = smtplib.SMTP('mail.hover.com', 587)
+    smtpObj = smtplib.SMTP_SSL("mail.hover.com", 465)
+    logger.warn("Created SSL smtpObj")
     try:
         smtpObj.ehlo()
-        smtpObj.starttls()
         smtpObj.login(Config.HOVER_MAIL, Config.HOVER_PASSWORD)
         smtpObj.sendmail(from_addr=Config.HOVER_MAIL, to_addrs=to, msg=body)
         result = True
+        logger.warn(f"Sending email to: {to}")
     except Exception as e:
         response = 'Sending email failed - ' + str(e)
         logger.error(response)

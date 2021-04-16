@@ -25,7 +25,7 @@ def send_mail(subject=None, msg=None, to=None):
     result = False
     # Convert subject and msg to byte array
     body = ('Subject: ' + subject + '\n').encode() + \
-           ('To: ' + ",".join(to) + '\n').encode() + \
+           ('To: ' + ", ".join(to) + '\n').encode() + \
            ('From: ' + Config.HOVER_MAIL + '\n\n').encode() + \
            (msg + '\n').encode()
 

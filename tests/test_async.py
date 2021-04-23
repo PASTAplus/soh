@@ -39,52 +39,63 @@ from soh.server.server import TomcatServer
 logger = daiquiri.getLogger(__name__)
 
 
+hosts = (
+    "pasta-d.lternet.edu",
+    "pasta-s.lternet.edu",
+    "pasta.lternet.edu",
+    "portal-d.edirepository.org",
+    "portal-s.edirepository.org",
+    "portal.edirepository.org",
+    "package-d.lternet.edu",
+    "package-s.lternet.edu",
+    "package.lternet.edu",
+    "audit-d.lternet.edu",
+    "audit-s.lternet.edu",
+    "audit.lternet.edu",
+    "gmn-s.lternet.edu",
+    "gmn.lternet.edu",
+    "gmn-s.edirepository.org",
+    "gmn.edirepository.org",
+    "solr-d.lternet.edu",
+    "solr-s.lternet.edu",
+    "solr.lternet.edu",
+    "auth.edirepository.org",
+    "ldap.edirepository.org",
+    "unit.lternet.edu",
+    "vocab.lternet.edu",
+    "seo.edirepository.org",
+    "tweeter.edirepository.org",
+    "space.lternet.edu",
+    "josh.lternet.edu",
+    "ezeml.edirepository.org"
+)
+
+
+status: dict = {}
+
+
 def test_hosts():
+    for host in hosts:
+        status[host] = [0, None]
     print()
     start_time = datetime.now()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(check_hosts())
+    task1 = loop.create_task(check_hosts())
+    task2 = loop.create_task(check_uptimes())
+    tasks = asyncio.gather(task1, task2)
+    loop.run_until_complete(tasks)
     end_time = datetime.now()
     print(f"Testing done: {end_time - start_time} seconds")
+    for host in hosts:
+        print(host, status[host])
 
 
 async def check_hosts():
-    hosts = (
-        "pasta-d.lternet.edu",
-        "pasta-s.lternet.edu",
-        "pasta.lternet.edu",
-        "portal-d.edirepository.org",
-        "portal-s.edirepository.org",
-        "portal.edirepository.org",
-        "package-d.lternet.edu",
-        "package-s.lternet.edu",
-        "package.lternet.edu",
-        "audit-d.lternet.edu",
-        "audit-s.lternet.edu",
-        "audit.lternet.edu",
-        "gmn-s.lternet.edu",
-        "gmn.lternet.edu",
-        "gmn-s.edirepository.org",
-        "gmn.edirepository.org",
-        "solr-d.lternet.edu",
-        "solr-s.lternet.edu",
-        "solr.lternet.edu",
-        "auth.edirepository.org",
-        "ldap.edirepository.org",
-        "unit.lternet.edu",
-        "vocab.lternet.edu",
-        "seo.edirepository.org",
-        "tweeter.edirepository.org",
-        "space.lternet.edu",
-        "josh.lternet.edu",
-        "ezeml.edirepository.org"
-    )
     for host in hosts:
         await do_check(host)
 
 
 async def do_check(host=None):
-    now_utc = pendulum.now("UTC")
     server = None
     if host in Config.server_types["APACHE"]:
         server = ApacheServer(host=host)
@@ -114,18 +125,19 @@ async def do_check(host=None):
         logger.error(f"Unknown server: {host}")
         return
 
-    status = await server.check_server()
+    status[host][0] = await server.check_server()
 
-    host_uptime = await soh.asserts.server.uptime(
-        host=host,
-        user=Config.USER,
-        key_path=Config.KEY_PATH,
-        key_pass=Config.KEY_PASS
-    )
+
+async def check_uptimes():
+    for host in hosts:
+        await do_uptime(host)
+
+
+async def do_uptime(host):
+    host_uptime = await soh.asserts.server.uptime(host=host)
+    status[host][1] = host_uptime
     if host_uptime is not None:
-        status = status | load_status(get_load(host_uptime))
-
-    print(host, status, host_uptime)
+        status[host][0] = status[host][0] | load_status(get_load(host_uptime))
 
 
 def get_load(uptime: str):
@@ -138,13 +150,13 @@ def get_load(uptime: str):
 
 
 def load_status(load: List) -> int:
-    status = Config.UP
+    ls = Config.UP
     if load is None:
-        status = Config.assertions["LOAD_HIGH"]
+        ls = Config.assertions["LOAD_HIGH"]
     else:
         load1 = load[0]
         load5 = load[1]
         load15 = load[2]
         if load1 >= Config.LOAD1_MAX:
-            status = Config.assertions["LOAD_HIGH"]
-    return status
+            ls = Config.assertions["LOAD_HIGH"]
+    return ls

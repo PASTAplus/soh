@@ -11,6 +11,7 @@
 :Created:
     3/12/18
 """
+import asyncssh
 import daiquiri
 import paramiko
 
@@ -23,28 +24,19 @@ async def uptime(host=None, user=None, key_path=None, key_pass=None):
 
     uptime = None
 
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.WarningPolicy())
-
     try:
-        client.connect(hostname=host, port=port, username=user,
-                       key_filename=key_path, passphrase=key_pass, timeout=5.0,
-                       auth_timeout=5.0)
+        async with asyncssh.connect(host=host, port=port) as conn:
+            result = await conn.run(cmd, check=True)
+            line = result.stdout.strip()
+            if line and 'load average:' in line:
+                uptime = line
 
-        stdin, stdout, stderr = client.exec_command(command=cmd)
-        line = ''.join([_.strip() for _ in stdout.readlines()])
-        if line and 'load average:' in line:
-            uptime = line
-
-    except paramiko.AuthenticationException as e:
+    except asyncssh.ChannelOpenError as e:
         logger.error(e)
-    except paramiko.BadHostKeyException as e:
+    except asyncssh.ProcessError as e:
         logger.error(e)
-    except paramiko.SSHException as e:
+    except asyncssh.TimeoutError as e:
         logger.error(e)
     except Exception as e:
         logger.error(e)
-    finally:
-        client.close()
     return uptime

@@ -14,12 +14,14 @@
 """
 import asyncio
 from datetime import datetime
+import re
+from typing import List
 
 import daiquiri
 import pendulum
-import pytest
 
 from soh.config import Config
+import soh.asserts.server
 from soh.server.server import ApacheServer
 from soh.server.server import ApacheTomcatServer
 from soh.server.server import AuditServer
@@ -113,4 +115,36 @@ async def do_check(host=None):
         return
 
     status = await server.check_server()
-    print(host, status)
+
+    host_uptime = await soh.asserts.server.uptime(
+        host=host,
+        user=Config.USER,
+        key_path=Config.KEY_PATH,
+        key_pass=Config.KEY_PASS
+    )
+    if host_uptime is not None:
+        status = status | load_status(get_load(host_uptime))
+
+    print(host, status, host_uptime)
+
+
+def get_load(uptime: str):
+    load = None
+    if uptime is not None:
+        match = re.search(r"\d?\d\.\d\d, \d?\d\.\d\d, \d?\d\.\d\d", uptime)
+        if match:
+            load = [float(_.strip()) for _ in match.group().split(",")]
+    return load
+
+
+def load_status(load: List) -> int:
+    status = Config.UP
+    if load is None:
+        status = Config.assertions["LOAD_HIGH"]
+    else:
+        load1 = load[0]
+        load5 = load[1]
+        load15 = load[2]
+        if load1 >= Config.LOAD1_MAX:
+            status = Config.assertions["LOAD_HIGH"]
+    return status

@@ -11,8 +11,10 @@
 :Created:
     3/30/18
 """
+from http import HTTPStatus
+
+import aiohttp
 import daiquiri
-import requests
 
 from soh.config import Config
 
@@ -20,14 +22,16 @@ from soh.config import Config
 logger = daiquiri.getLogger('audit.py: ' + __name__)
 
 
-def is_down(host=None):
+async def is_down(host=None):
     url = 'http://' + host + ':8080/audit/docs/api'
     assert_is_down = True
     try:
-        r = requests.get(url=url, allow_redirects=False, timeout=Config.TIMEOUT)
-        assert_is_down = r.status_code != requests.codes.ok
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                 r = resp.status
+        assert_is_down = r != HTTPStatus.OK
         if assert_is_down:
-            msg = f"{__file__}: Status code is {r.status_code}"
+            msg = f"{__file__}: Status code is {r}"
             logger.warning(msg)
     except Exception as e:
         logger.error(e)

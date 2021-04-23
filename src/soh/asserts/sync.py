@@ -129,7 +129,7 @@ def get_ORE(host=None, doi=None):
     return ok
 
 
-def is_down(host=None):
+async def is_down(host=None):
     IS_DOWN = True
     IS_UP = False
 

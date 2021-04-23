@@ -11,8 +11,10 @@
 :Created:
     10/25/19
 """
+from http import HTTPStatus
+
+import aiohttp
 import daiquiri
-import requests
 
 from soh.config import Config
 
@@ -20,15 +22,17 @@ from soh.config import Config
 logger = daiquiri.getLogger('auth.py: ' + __name__)
 
 
-def is_down(host=None):
+async def is_down(host=None):
     url = 'https://' + host + '/auth/accept'
     assert_is_down = True
     try:
-        r = requests.get(url=url, allow_redirects=False, timeout=Config.TIMEOUT)
-        # Assert down only for server error and higher
-        assert_is_down = r.status_code != requests.codes.bad
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                 r = resp.status
+        # Assert down for any response other than bad request
+        assert_is_down = r != HTTPStatus.BAD_REQUEST
         if assert_is_down:
-            msg = f"{__file__}: Status code is {r.status_code}"
+            msg = f"{__file__}: Status code is {r}"
             logger.warning(msg)
     except Exception as e:
         logger.error(e)

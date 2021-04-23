@@ -20,7 +20,7 @@ from soh.config import Config
 logger = daiquiri.getLogger('ldap.py: ' + __name__)
 
 
-def is_down(host=None):
+async def is_down(host=None):
     server = Server(host, use_ssl=True, get_info=ALL)
     assert_is_down = True
     try:

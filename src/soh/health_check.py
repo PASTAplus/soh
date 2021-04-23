@@ -11,12 +11,13 @@
 :Created:
     3/16/18
 """
+import asyncio
+from datetime import datetime, tzinfo
 import logging
 import os
 import pickle
 import re
 import sys
-import time
 from typing import List
 
 import click
@@ -49,10 +50,27 @@ daiquiri.setup(level=logging.WARN, outputs=(daiquiri.output.File(logfile),
 logger = daiquiri.getLogger("health_check.py: " + __name__)
 
 
-def do_check(host=None):
-    now_utc = pendulum.now("UTC")
+new_status = dict()
 
-    server = None
+
+async def check_uptimes(hosts):
+    for host in hosts:
+        await do_uptime(host)
+
+
+async def do_uptime(host):
+    host_uptime = await server.uptime(host=host)
+    new_status[host][1] = host_uptime
+    if host_uptime is not None:
+        new_status[host][0] = new_status[host][0] | load_status(get_load(host_uptime))
+
+
+async def check_hosts(hosts):
+    for host in hosts:
+        await do_check(host)
+
+
+async def do_check(host=None):
     if host in Config.server_types["APACHE"]:
         server = ApacheServer(host=host)
     elif host in Config.server_types["APACHE_TOMCAT"]:
@@ -81,8 +99,7 @@ def do_check(host=None):
         logger.error(f"Unknown server: {host}")
         return
 
-    status = server.check_server()
-    return status
+    new_status[host][0] = await server.check_server()
 
 
 def do_diagnostics(host: str, status: int, uptime: str, timestamp: pendulum.datetime) -> str:
@@ -179,7 +196,6 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     HOSTS: space separated list of hosts
 
     """
-    new_status = dict()
     if os.path.exists(Config.STATUS_FILE):
         with open(Config.STATUS_FILE, "rb") as f:
             old_status = pickle.load(f)
@@ -205,7 +221,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
     soh_db = SohDb()
     soh_db.connect_soh_db()
 
-    local_tz = pendulum.now().timezone_name
+    st = datetime.now()
     now_utc = pendulum.now("UTC")
     new_status["timestamp"] = now_utc.isoformat()
 
@@ -214,18 +230,18 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         logger.warning(msg)
     else:
         for host in hosts:
-            host_status = do_check(host=host)
-            host_uptime = server.uptime(
-                host=host,
-                user=Config.USER,
-                key_path=Config.KEY_PATH,
-                key_pass=Config.KEY_PASS
-            )
-            if host_uptime is not None:
-                host_status = host_status | load_status(get_load(host_uptime))
+            new_status[host] = [0, None]
+
+        loop = asyncio.get_event_loop()
+        task1 = loop.create_task(check_hosts(hosts))
+        task2 = loop.create_task(check_uptimes(hosts))
+        tasks = asyncio.gather(task1, task2)
+        loop.run_until_complete(tasks)
+
+        for host in hosts:
             if notify:
-                if host not in old_status or old_status[host][0] != host_status:
-                    diagnostic = do_diagnostics(host, host_status, host_uptime, now_utc)
+                if host not in old_status or old_status[host][0] != new_status[host][0]:
+                    diagnostic = do_diagnostics(host, new_status[host][0], new_status[host][1], now_utc)
                     subject = f"Status change for {host}"
                     logger.warning(diagnostic)
                     try:
@@ -234,13 +250,13 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
                         )
                     except Exception as e:
                         logger.error(e)
-            if store:
-                new_status[host] = (host_status, host_uptime)
-                with open(Config.STATUS_FILE, "wb") as f:
-                    pickle.dump(new_status, f)
             if not quiet:
-                print(f"{host}: {host_status} - {host_uptime}")
-            time.sleep(Config.SLEEP)
+                print(f"{host}: {new_status[host][0]} - {new_status[host][1]}")
+        if not quiet:
+            print(f"Total processing time: {datetime.now() - st}")
+        if store:
+            with open(Config.STATUS_FILE, "wb") as f:
+                pickle.dump(new_status, f)
     lock.release()
     logger.info("Lock file {} released".format(lock.lock_file))
 

@@ -3,7 +3,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.8
   - requests
   - pendulum
   - paramiko
@@ -16,4 +15,8 @@ dependencies:
   - ldap3
   - daiquiri
   - pytzdata
+  - asyncssh
+  - aiohttp
+  - cchardet
+  - aiodns
 prefix: /home/servilla/anaconda3/envs/soh

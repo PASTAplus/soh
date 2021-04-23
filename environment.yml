@@ -5,10 +5,15 @@ channels:
 dependencies:
   - _libgcc_mutex=0.1
   - _openmp_mutex=4.5
+  - aiodns=2.0.0
+  - aiohttp=3.7.4
+  - async-timeout=3.0.1
+  - asyncssh=2.5.0
   - attrs=20.3.0
   - bcrypt=3.2.0
   - brotlipy=0.7.0
   - ca-certificates=2020.12.5
+  - cchardet=2.1.7
   - certifi=2020.12.5
   - cffi=1.14.5
   - chardet=4.0.0
@@ -29,6 +34,7 @@ dependencies:
   - libsodium=1.0.18
   - libstdcxx-ng=9.3.0
   - more-itertools=8.7.0
+  - multidict=5.1.0
   - ncurses=6.2
   - openssl=1.1.1k
   - packaging=20.9
@@ -39,6 +45,7 @@ dependencies:
   - psycopg2=2.8.6
   - py=1.10.0
   - pyasn1=0.4.8
+  - pycares=3.1.1
   - pycparser=2.20
   - pynacl=1.4.0
   - pyopenssl=20.0.1
@@ -58,8 +65,11 @@ dependencies:
   - sqlite=3.35.4
   - tk=8.6.10
   - toml=0.10.2
+  - typing-extensions=3.7.4.3
+  - typing_extensions=3.7.4.3
   - urllib3=1.26.4
   - wheel=0.36.2
   - xz=5.2.5
+  - yarl=1.6.3
   - zlib=1.2.11
 prefix: /home/servilla/anaconda3/envs/soh

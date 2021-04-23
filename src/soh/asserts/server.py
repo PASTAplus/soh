@@ -18,7 +18,7 @@ import paramiko
 logger = daiquiri.getLogger('server.py: ' + __name__)
 
 
-async def uptime(host=None, user=None, key_path=None, key_pass=None):
+async def uptime(host=None):
     port = 22
     cmd = 'uptime'
 

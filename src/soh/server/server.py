@@ -43,9 +43,7 @@ class Server(object):
 
     async def _server_is_down(self):
         server_is_down = False
-        server_uptime = await server.uptime(host=self._host, user=Config.USER,
-                                      key_path=Config.KEY_PATH,
-                                      key_pass=Config.KEY_PASS)
+        server_uptime = await server.uptime(host=self._host)
         if server_uptime is None:
             server_is_down = True
         return server_is_down

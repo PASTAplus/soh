@@ -43,7 +43,7 @@ async def uptime(host=None):
 
 async def read_only(host=None):
     port = 22
-    cmd = 'touch /tmp/ro_test'
+    cmd = 'touch /tmp/ro_test; rm /tmp/ro_test'
 
     ro = True
 

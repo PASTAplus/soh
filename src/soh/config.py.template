@@ -60,7 +60,8 @@ class Config(object):
         'TWEETER': 'tweeter.edirepository.org',
         'SPACE': 'space.lternet.edu',
         'JOSH': 'josh.lternet.edu',
-        'EZEML': 'ezeml.edirepository.org'
+        'EZEML': 'ezeml.edirepository.org',
+        'WEBX': 'web-x.edirepository.org'
     }
 
     server_types = {
@@ -69,7 +70,8 @@ class Config(object):
              'vocab.lternet.edu',
              'seo.edirepository.org',
              'ezeml.edirepository.org',
-             'tweeter.edirepository.org'],
+             'tweeter.edirepository.org',
+             'web-x.edirepository.org'],
         'APACHE_TOMCAT':
             [],
         'AUDIT':
@@ -118,35 +120,36 @@ class Config(object):
 
     # SOH anti-assertions and corresponding identifiers
     assertions = {
-        'SERVER_DOWN': 1,        # 00000000000001
-        'JETTY_DOWN': 2,         # 00000000000010
-        'TOMCAT_DOWN': 4,        # 00000000000100
-        'SOLR_DOWN': 8,          # 00000000001000
-        'LDAP_DOWN': 16,         # 00000000010000
-        'APACHE_DOWN': 32,       # 00000000100000
-        'GMN_DOWN': 64,          # 00000001000000
-        'PORTAL_DOWN': 128,      # 00000010000000
-        'PACKAGE_DOWN': 256,     # 00000100000000
-        'GATEKEEPER_DOWN': 512,  # 00001000000000
-        'AUDIT_DOWN': 1024,      # 00010000000000
-        'AUTH_DOWN': 2048,       # 00100000000000
-        'SYNC_DOWN': 4096,       # 01000000000000
-        'LOAD_HIGH': 8192,       # 10000000000000
+        'SERVER_DOWN': 1,        # 000000000000001
+        'JETTY_DOWN': 2,         # 000000000000010
+        'TOMCAT_DOWN': 4,        # 000000000000100
+        'SOLR_DOWN': 8,          # 000000000001000
+        'LDAP_DOWN': 16,         # 000000000010000
+        'APACHE_DOWN': 32,       # 000000000100000
+        'GMN_DOWN': 64,          # 000000001000000
+        'PORTAL_DOWN': 128,      # 000000010000000
+        'PACKAGE_DOWN': 256,     # 000000100000000
+        'GATEKEEPER_DOWN': 512,  # 000001000000000
+        'AUDIT_DOWN': 1024,      # 000010000000000
+        'AUTH_DOWN': 2048,       # 000100000000000
+        'SYNC_DOWN': 4096,       # 001000000000000
+        'LOAD_HIGH': 8192,       # 010000000000000
+        'READ_ONLY': 16384,      # 100000000000000
     }
 
     server_assertions = {
-        'SERVER': ['SERVER_DOWN', 'LOAD_HIGH'],
-        'APACHE': ['APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'JETTY': ['JETTY_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'SOLR': ['SOLR_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'LDAP': ['LDAP_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'GMN': ['SYNC_DOWN', 'GMN_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH'],
-        'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH']
+        'SERVER': ['SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'APACHE': ['APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'JETTY': ['JETTY_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'TOMCAT': ['TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'SOLR': ['SOLR_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'LDAP': ['LDAP_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'APACHE_TOMCAT': ['APACHE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'GMN': ['SYNC_DOWN', 'GMN_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'PORTAL': ['PORTAL_DOWN', 'TOMCAT_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'PACKAGE': ['PACKAGE_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'AUDIT': ['AUDIT_DOWN', 'TOMCAT_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY'],
+        'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY']
     }
 
     # Email configuration

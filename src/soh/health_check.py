@@ -53,6 +53,17 @@ logger = daiquiri.getLogger("health_check.py: " + __name__)
 new_status = dict()
 
 
+async def check_read_only(hosts):
+    for host in hosts:
+        await do_read_only(host)
+
+
+async def do_read_only(host):
+    host_ro = await server.read_only(host=host)
+    if host_ro:
+        new_status[host][0] = new_status[host][0] | Config.assertions["READ_ONLY"]
+
+
 async def check_uptimes(hosts):
     for host in hosts:
         await do_uptime(host)
@@ -153,6 +164,9 @@ def do_diagnostics(host: str, status: int, uptime: str, timestamp: pendulum.date
     if status & Config.assertions["LOAD_HIGH"]:
         diagnostics += "LOAD HIGH\n"
 
+    if status & Config.assertions["READ_ONLY"]:
+        diagnostics += "FILESYSTEM READ ONLY\n"
+
     return diagnostics
 
 
@@ -183,7 +197,10 @@ help_quiet = "No stdout"
 help_notify = "Send email notification of server status change"
 
 
-@click.command()
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+
+
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument("hosts", nargs=-1)
 @click.option("-s", "--store", default=False, is_flag=True, help=help_store)
 @click.option("-q", "--quiet", default=False, is_flag=True, help=help_quiet)
@@ -235,7 +252,8 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         loop = asyncio.get_event_loop()
         task1 = loop.create_task(check_hosts(hosts))
         task2 = loop.create_task(check_uptimes(hosts))
-        tasks = asyncio.gather(task1, task2)
+        task3 = loop.create_task(check_read_only(hosts))
+        tasks = asyncio.gather(task1, task2, task3)
         loop.run_until_complete(tasks)
 
         for host in hosts:

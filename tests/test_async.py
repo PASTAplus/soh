@@ -39,7 +39,7 @@ from soh.server.server import TomcatServer
 logger = daiquiri.getLogger(__name__)
 
 
-hosts = (
+hosts = [
     "pasta-d.lternet.edu",
     "pasta-s.lternet.edu",
     "pasta.lternet.edu",
@@ -67,8 +67,9 @@ hosts = (
     "tweeter.edirepository.org",
     "space.lternet.edu",
     "josh.lternet.edu",
-    "ezeml.edirepository.org"
-)
+    "ezeml.edirepository.org",
+    "web-x.edirepository.org"
+]
 
 
 status: dict = {}
@@ -82,7 +83,8 @@ def test_hosts():
     loop = asyncio.get_event_loop()
     task1 = loop.create_task(check_hosts())
     task2 = loop.create_task(check_uptimes())
-    tasks = asyncio.gather(task1, task2)
+    task3 = loop.create_task(check_read_only())
+    tasks = asyncio.gather(task1, task2, task3)
     loop.run_until_complete(tasks)
     end_time = datetime.now()
     print(f"Testing done: {end_time - start_time} seconds")
@@ -126,6 +128,17 @@ async def do_check(host=None):
         return
 
     status[host][0] = await server.check_server()
+
+
+async def check_read_only():
+    for host in hosts:
+        await do_read_only(host)
+
+
+async def do_read_only(host):
+    host_ro = await soh.asserts.server.read_only(host=host)
+    if host_ro:
+        status[host][0] = status[host][0] | Config.assertions["READ_ONLY"]
 
 
 async def check_uptimes():

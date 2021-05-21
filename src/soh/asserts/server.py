@@ -13,7 +13,6 @@
 """
 import asyncssh
 import daiquiri
-import paramiko
 
 logger = daiquiri.getLogger('server.py: ' + __name__)
 
@@ -33,10 +32,33 @@ async def uptime(host=None):
 
     except asyncssh.ChannelOpenError as e:
         logger.error(e)
-    except asyncssh.ProcessError as e:
-        logger.error(e)
     except asyncssh.TimeoutError as e:
+        logger.error(e)
+    except asyncssh.ProcessError as e:
         logger.error(e)
     except Exception as e:
         logger.error(e)
     return uptime
+
+
+async def read_only(host=None):
+    port = 22
+    cmd = 'touch /tmp/ro_test'
+
+    ro = True
+
+    try:
+        async with asyncssh.connect(host=host, port=port) as conn:
+            result = await conn.run(cmd, check=True)
+            if result.exit_status == 0:
+                ro = False
+
+    except asyncssh.ChannelOpenError as e:
+        logger.error(e)
+    except asyncssh.TimeoutError as e:
+        logger.error(e)
+    except asyncssh.ProcessError as e:
+        logger.error(e)
+    except Exception as e:
+        logger.error(e)
+    return ro

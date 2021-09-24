@@ -26,7 +26,7 @@ def send_mail(subject=None, msg=None, to=None):
     # Convert subject and msg to byte array
     body = ('Subject: ' + subject + '\n').encode() + \
            ('To: ' + ", ".join(to) + '\n').encode() + \
-           ('From: ' + Config.HOVER_MAIL + '\n\n').encode() + \
+           ('From: ' + Config.FROM + '\n\n').encode() + \
            (msg + '\n').encode()
 
     smtpObj = smtplib.SMTP_SSL("mail.hover.com", 465)

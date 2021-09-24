@@ -158,6 +158,7 @@ class Config(object):
     HOVER_MAIL = 'SUPPORT_EMAIL_ADDRESS'
     HOVER_PASSWORD = 'SUPPORT_EMAIL_PASSWORD'
     ADMIN_TO: tuple = ('admin@edirepository.org',)
+    FROM = 'dashboard@edirepository.org'
 
     # PASTA database connection
     DB_USER = 'DB_USER'

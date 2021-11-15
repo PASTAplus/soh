@@ -22,7 +22,7 @@ packaging==20.9
 paramiko==2.7.2
 pastaplus.soh==2020.4.30
 pendulum==2.1.2
-pip==21.0.1
+pip==21.1
 pluggy==0.13.1
 psycopg2==2.8.6
 py==1.10.0

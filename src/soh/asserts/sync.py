@@ -33,7 +33,7 @@ def get_recent_package_from_pasta_db(host=None, pasta_db_host=None):
 
     db = Config.DB_DRIVER + '://' + \
          Config.DB_USER + ':' + \
-         Config.DB_PW + '@' + \
+         quote_plus(Config.DB_PW) + '@' + \
          pasta_db_host + '/' + \
          Config.DB_DB
 

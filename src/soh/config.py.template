@@ -54,7 +54,6 @@ class Config(object):
         'AUTH': 'auth.edirepository.org',
         'LDAP_EDI': 'ldap.edirepository.org',
         'LDAP_LTER': 'ldap.lternet.edu',
-        'UNIT': 'unit.lternet.edu',
         'VOCAB': 'vocab.lternet.edu',
         'SEO': 'seo.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
@@ -67,8 +66,7 @@ class Config(object):
 
     server_types = {
         'APACHE':
-            ['unit.lternet.edu',
-             'vocab.lternet.edu',
+            ['vocab.lternet.edu',
              'seo.edirepository.org',
              'ezeml.edirepository.org',
              'tweeter.edirepository.org',

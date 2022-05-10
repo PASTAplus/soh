@@ -37,14 +37,11 @@ def send_mail(subject, msg) -> bool:
     part = MIMEText(msg, "plain")
     message.attach(part)
 
-    context = ssl.create_default_context()
     try:
         with smtplib.SMTP(Config.RELAY_HOST, Config.RELAY_TLS_PORT) as server:
             server.starttls()
             server.login(Config.RELAY_USER, Config.RELAY_PASSWORD)
-            server.sendmail(
-                Config.FROM, Config.TO, message.as_string()
-            )
+            server.sendmail(Config.FROM, Config.TO, message.as_string())
         return True
     except Exception as e:
         logger.error(e)

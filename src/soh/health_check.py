@@ -59,7 +59,9 @@ async def check_read_only(hosts):
 
 
 async def do_read_only(host):
+    st = datetime.now()
     host_ro = await server.read_only(host=host)
+    logger.warning(f"Run time read only {host}: {datetime.now() - st}")
     if host_ro:
         new_status[host][0] = new_status[host][0] | Config.assertions["READ_ONLY"]
 
@@ -70,7 +72,9 @@ async def check_uptimes(hosts):
 
 
 async def do_uptime(host):
+    st = datetime.now()
     host_uptime = await server.uptime(host=host)
+    logger.warning(f"Run time for uptime {host}: {datetime.now() - st}")
     new_status[host][1] = host_uptime
     if host_uptime is not None:
         new_status[host][0] = new_status[host][0] | load_status(get_load(host_uptime))
@@ -110,7 +114,9 @@ async def do_check(host=None):
         logger.error(f"Unknown server: {host}")
         return
 
+    st = datetime.now()
     new_status[host][0] = await server.check_server()
+    logger.warning(f"Run time for check {host}: {datetime.now() - st}")
 
 
 def do_diagnostics(host: str, status: int, uptime: str, timestamp: pendulum.datetime) -> str:

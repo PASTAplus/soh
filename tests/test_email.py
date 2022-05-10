@@ -17,7 +17,7 @@ import pytest
 import soh.mimemail
 
 
-def test_mailout():
+def test_mimemail():
     subject = "Test"
     message = "Testing email"
 

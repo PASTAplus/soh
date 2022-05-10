@@ -26,7 +26,7 @@ import pendulum
 
 from soh.config import Config
 from soh.lock import Lock
-from soh import mailout
+from soh import mimemail
 from soh.asserts import server
 from soh.model.soh_db import SohDb
 from soh.server.server import ApacheServer
@@ -225,9 +225,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         logger.error(msg)
         try:
             subject = f"Dashboard: Lock file {lock.lock_file} exists..."
-            mailout.send_mail(
-                subject=subject, msg=msg, to=Config.ADMIN_TO
-            )
+            mimemail.send_mail(subject=subject, msg=msg)
         except Exception as e:
             logger.error(e)
         return 1
@@ -263,9 +261,7 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
                     subject = f"Status change for {host}"
                     logger.warning(diagnostic)
                     try:
-                        mailout.send_mail(
-                            subject=subject, msg=diagnostic, to=Config.ADMIN_TO
-                        )
+                        mimemail.send_mail(subject=subject, msg=diagnostic)
                     except Exception as e:
                         logger.error(e)
             if not quiet:

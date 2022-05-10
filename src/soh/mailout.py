@@ -11,6 +11,7 @@
 :Created:
     5/24/18
 """
+from email.utils import formataddr
 import smtplib
 
 import daiquiri
@@ -25,16 +26,17 @@ def send_mail(subject=None, msg=None, to=None):
     result = False
     # Convert subject and msg to byte array
     body = ('Subject: ' + subject + '\n').encode() + \
-           ('To: ' + ", ".join(to) + '\n').encode() + \
-           ('From: ' + Config.FROM + '\n\n').encode() + \
+           ('To: ' + formataddr(("Admin", to)) + '\n').encode() + \
+           ('From: ' + formataddr(("Dashboard", Config.FROM)) + '\n\n').encode() + \
            (msg + '\n').encode()
 
-    smtpObj = smtplib.SMTP_SSL("mail.hover.com", 465)
+    smtpObj = smtplib.SMTP(Config.RELAY_HOST, Config.RELAY_TLS_PORT)
+    smtpObj.starttls()
     logger.warn("Created SSL smtpObj")
     try:
         smtpObj.ehlo()
-        smtpObj.login(Config.HOVER_MAIL, Config.HOVER_PASSWORD)
-        smtpObj.sendmail(from_addr=Config.HOVER_MAIL, to_addrs=to, msg=body)
+        smtpObj.login(Config.RELAY_USER, Config.RELAY_PASSWORD)
+        smtpObj.sendmail(from_addr=Config.FROM, to_addrs=to, msg=body)
         result = True
         logger.warn(f"Sending email to: {to}")
     except Exception as e:

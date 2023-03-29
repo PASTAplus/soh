@@ -53,22 +53,27 @@ class Config(object):
         'GMN_S_EDI': 'gmn-s.edirepository.org',
         'AUTH': 'auth.edirepository.org',
         'LDAP_EDI': 'ldap.edirepository.org',
-        'LDAP_LTER': 'ldap.lternet.edu',
+        'EZEML': 'ezeml.edirepository.org',
+        'EZEML_S': 'ezeml-s.edirepository.org',
+        'EZEML_D': 'ezeml-d.edirepository.org',
+        'UNIT': 'unit.lternet.edu',
         'VOCAB': 'vocab.lternet.edu',
         'SEO': 'seo.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
         'SPACE': 'space.lternet.edu',
         'JOSH': 'josh.edirepository.org',
-        'EZEML': 'ezeml.edirepository.org',
         'WEBX': 'web-x.edirepository.org',
         'SCHEMA': 'nis.lternet.edu'
-    }
+
+}
 
     server_types = {
         'APACHE':
             ['vocab.lternet.edu',
              'seo.edirepository.org',
              'ezeml.edirepository.org',
+             'ezeml-s.edirepository.org',
+             'ezeml-d.edirepository.org',
              'tweeter.edirepository.org',
              'web-x.edirepository.org',
              'nis.lternet.edu'],
@@ -90,8 +95,7 @@ class Config(object):
              'pasta-s.lternet.edu',
              'pasta-d.lternet.edu'],
         'LDAP':
-            ['ldap.edirepository.org',
-             'ldap.lternet.edu'],
+            ['ldap.edirepository.org'],
         'PORTAL':
             ['portal.edirepository.org',
              'portal-s.edirepository.org',

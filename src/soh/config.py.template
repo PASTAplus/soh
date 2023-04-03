@@ -52,7 +52,10 @@ class Config(object):
         'GMN_EDI': 'gmn.edirepository.org',
         'GMN_S_EDI': 'gmn-s.edirepository.org',
         'AUTH': 'auth.edirepository.org',
+        'AUTH_D': 'auth-d.edirepository.org',
         'LDAP_EDI': 'ldap.edirepository.org',
+        'LDAP2_EDI': 'ldap2.edirepository.org',
+        'LDAP_D': 'ldap-d.edirepository.org',
         'EZEML': 'ezeml.edirepository.org',
         'EZEML_S': 'ezeml-s.edirepository.org',
         'EZEML_D': 'ezeml-d.edirepository.org',
@@ -84,7 +87,8 @@ class Config(object):
              'audit-s.lternet.edu',
              'audit-d.lternet.edu', ],
         'AUTH':
-            ['auth.edirepository.org'],
+            ['auth.edirepository.org',
+             'auth-d.edirepository.org'],
         'GMN':
             ['gmn.edirepository.org',
              'gmn-s.edirepository.org',
@@ -95,7 +99,9 @@ class Config(object):
              'pasta-s.lternet.edu',
              'pasta-d.lternet.edu'],
         'LDAP':
-            ['ldap.edirepository.org'],
+            ['ldap.edirepository.org',
+             'ldap2.edirepository.org',
+             'ldap-d.edirepository.org'],
         'PORTAL':
             ['portal.edirepository.org',
              'portal-s.edirepository.org',

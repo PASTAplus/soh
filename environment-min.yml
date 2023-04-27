@@ -3,21 +3,21 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - python=3.11
   - requests
-  - pendulum
-  - paramiko
-  - click
-  - psycopg2
-  - sqlalchemy
-  - python=3.8
-  - cryptography
-  - pytest
-  - ldap3
   - daiquiri
-  - pytzdata
+  - paramiko
+  - pendulum
+  - pytest
+  - psycopg2
   - asyncssh
-  - aiohttp
-  - cchardet
   - aiodns
-  - urllib3=1.26.5
+  - pytzdata
+  - urllib3
+  - cchardet
+  - ldap3
+  - sqlalchemy
+  - cryptography
+  - click
+  - aiohttp
 prefix: /home/servilla/anaconda3/envs/soh

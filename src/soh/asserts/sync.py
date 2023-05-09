@@ -44,7 +44,7 @@ def get_recent_package_from_pasta_db(host=None, pasta_db_host=None):
         logger.error(e)
         return ERROR, ''
 
-    past = pendulum.now(tz='US/Mountain').subtract(hours=GRACE_PERIOD)  # grace period to allow GMN to catch up
+    past = pendulum.now().subtract(hours=GRACE_PERIOD)  # grace period to allow GMN to catch up
 
     is_edi = 'edirepository' in host
     if is_edi:

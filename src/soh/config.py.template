@@ -62,6 +62,7 @@ class Config(object):
         'UNIT': 'unit.lternet.edu',
         'VOCAB': 'vocab.lternet.edu',
         'SEO': 'seo.edirepository.org',
+        'DEX': 'dex.edirepository.org',
         'TWEETER': 'tweeter.edirepository.org',
         'SPACE': 'space.lternet.edu',
         'JOSH': 'josh.edirepository.org',
@@ -74,6 +75,7 @@ class Config(object):
         'APACHE':
             ['vocab.lternet.edu',
              'seo.edirepository.org',
+             'dex.edirepository.org',
              'ezeml.edirepository.org',
              'ezeml-s.edirepository.org',
              'ezeml-d.edirepository.org',

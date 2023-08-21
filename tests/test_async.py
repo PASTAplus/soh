@@ -61,12 +61,11 @@ hosts = [
     "solr.lternet.edu",
     "auth.edirepository.org",
     "ldap.edirepository.org",
-    "unit.lternet.edu",
     "vocab.lternet.edu",
     "seo.edirepository.org",
     "tweeter.edirepository.org",
     "space.lternet.edu",
-    "josh.lternet.edu",
+    "josh.edirepository.org",
     "ezeml.edirepository.org",
     "web-x.edirepository.org"
 ]

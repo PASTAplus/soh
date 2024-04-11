@@ -23,7 +23,7 @@ from soh.config import Config
 
 logger = daiquiri.getLogger('sync.py: ' + __name__)
 
-TRACE = True
+TRACE = False
 GRACE_PERIOD = 2  # hours to allow GMN to catch up
 ERROR = object()  # to provide a unique error indicator value
 

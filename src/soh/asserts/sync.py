@@ -17,7 +17,6 @@ import pendulum
 import requests
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
-import xml.etree.ElementTree as ET
 
 from soh.config import Config
 
@@ -50,7 +49,7 @@ def get_recent_package_from_pasta_db(host=None, pasta_db_host=None):
     if is_edi:
         scope = "and scope='edi'"
     else:
-        scope = "and scope<>'edi'"
+        scope = "and scope not in ('edi', 'cos-spu')"
 
     query = ('select datapackagemanager.resource_registry.package_id, '
             'datapackagemanager.resource_registry.doi from '

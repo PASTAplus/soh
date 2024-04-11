@@ -23,10 +23,16 @@ from soh.config import Config
 
 logger = daiquiri.getLogger('sync.py: ' + __name__)
 
-TRACE = False
+TRACE = True
 GRACE_PERIOD = 2  # hours to allow GMN to catch up
 ERROR = object()  # to provide a unique error indicator value
 
+LTER = "'ecotrends', 'knb-lter-and', 'knb-lter-arc', 'knb-lter-bes', 'knb-lter-ble', 'knb-lter-bnz', 'knb-lter-cap', \
+'knb-lter-cce', 'knb-lter-cdr', 'knb-lter-cwt', 'knb-lter-fce', 'knb-lter-gce', 'knb-lter-hbr', 'knb-lter-hfr', \
+'knb-lter-jrn', 'knb-lter-kbs', 'knb-lter-knz', 'knb-lter-luq', 'knb-lter-mcm', 'knb-lter-mcr', 'knb-lter-msp', \
+'knb-lter-nes', 'knb-lter-nin', 'knb-lter-ntl', 'knb-lter-nwk', 'knb-lter-nwt', 'knb-lter-pal', 'knb-lter-pie', \
+'knb-lter-sbc', 'knb-lter-sev', 'knb-lter-sgs', 'knb-lter-vcr', 'lter-landsat', 'lter-landsat-ledaps', 'msb-cap', \
+'msb-paleon'"
 
 def get_recent_package_from_pasta_db(host=None, pasta_db_host=None):
 
@@ -49,7 +55,7 @@ def get_recent_package_from_pasta_db(host=None, pasta_db_host=None):
     if is_edi:
         scope = "and scope='edi'"
     else:
-        scope = "and scope not in ('edi', 'cos-spu')"
+        scope = f"and scope in ({LTER})"
 
     query = ('select datapackagemanager.resource_registry.package_id, '
             'datapackagemanager.resource_registry.doi from '

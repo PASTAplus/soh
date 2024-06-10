@@ -264,7 +264,10 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
             if notify:
                 if host not in old_status or old_status[host][0] != new_status[host][0]:
                     diagnostic = do_diagnostics(host, new_status[host][0], new_status[host][1], now_utc)
-                    subject = f"Status change for {host}"
+                    if "Is now OK" in diagnostic:
+                        subject = f"Status change: {host} is nominal"
+                    else:
+                        subject = f"Status change: {host} is problematic"
                     logger.warning(diagnostic)
                     try:
                         mimemail.send_mail(subject=subject, msg=diagnostic)

@@ -46,6 +46,6 @@ SQLAlchemy==1.4.46
 time-machine==2.14.1
 tomli==2.0.1
 typing_extensions==4.12.2
-urllib3==2.2.1
+urllib3==2.2.2
 wheel==0.43.0
 yarl==1.9.4

@@ -23,14 +23,14 @@ logger = daiquiri.getLogger('auth.py: ' + __name__)
 
 
 async def is_down(host=None):
-    url = 'https://' + host + '/auth/accept'
+    url = 'https://' + host + '/auth/ping'
     assert_is_down = True
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                  r = resp.status
         # Assert down for any response other than bad request
-        assert_is_down = r != HTTPStatus.BAD_REQUEST
+        assert_is_down = r != HTTPStatus.OK
         if assert_is_down:
             msg = f"{__file__}: Status code is {r}"
             logger.warning(msg)

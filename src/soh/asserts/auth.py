@@ -23,7 +23,11 @@ logger = daiquiri.getLogger('auth.py: ' + __name__)
 
 
 async def is_down(host=None):
-    url = 'https://' + host + '/auth/ping'
+    # Temporary patch for changes between auth and auth-d URL pattern
+    if host == "auth.edirepository.org":
+        url = 'https://' + host + '/auth/ping'
+    else:
+        url = 'https://' + host + '/auth/v1/ping'
     assert_is_down = True
     try:
         async with aiohttp.ClientSession() as session:

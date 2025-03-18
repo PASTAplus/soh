@@ -256,8 +256,13 @@ def main(hosts: tuple, store: bool, quiet: bool, notify: bool):
         loop = asyncio.get_event_loop()
         task1 = loop.create_task(check_hosts(hosts))
         task2 = loop.create_task(check_uptimes(hosts))
-        task3 = loop.create_task(check_read_only(hosts))
-        tasks = asyncio.gather(task1, task2, task3)
+
+        if Config.READ_ONLY:
+            task3 = loop.create_task(check_read_only(hosts))
+            tasks = asyncio.gather(task1, task2, task3)
+        else:
+            tasks = asyncio.gather(task1, task2)
+
         loop.run_until_complete(tasks)
 
         for host in hosts:

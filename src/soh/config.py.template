@@ -160,6 +160,9 @@ class Config(object):
         'AUTH': ['AUTH_DOWN', 'APACHE_DOWN', 'SERVER_DOWN', 'LOAD_HIGH', 'READ_ONLY']
     }
 
+    # READ_ONLY flag
+    READ_ONLY = False
+
     # Email configuration
     RELAY_HOST = 'RELAY_HOST'
     RELAY_PASSWORD = 'RELAY_PASSWORD'

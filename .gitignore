@@ -114,3 +114,6 @@ config.py
 properties.py
 settings.py
 *.pkl
+# pixi environments
+.pixi
+*.egg-info

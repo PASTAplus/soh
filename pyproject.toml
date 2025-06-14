@@ -1,0 +1,35 @@
+[project]
+authors = [
+  {name = "Mark Servilla", email = "mark.servilla@gmail.com"},
+  {name = "James Brunt", email = "jbrunt@unm.edu"}
+]
+name = "soh"
+requires-python = ">=3.11,<3.12"
+version = "2025.03.18"
+
+dependencies = [
+    "requests",
+    "daiquiri",
+    "paramiko",
+    "pendulum",
+    "pytest",
+    "psycopg2",
+    "asyncssh",
+    "aiodns",
+    "pytzdata",
+    "urllib3",
+    "cchardet",
+    "ldap3",
+    "sqlalchemy==1.4.46",
+    "cryptography",
+    "click",
+    "aiohttp"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["soh*"]

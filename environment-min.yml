@@ -14,7 +14,7 @@ dependencies:
   - aiodns
   - pytzdata
   - urllib3
-  - cchardet
+  - faust-cchardet
   - ldap3
   - sqlalchemy=1.4.46
   - cryptography

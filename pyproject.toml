@@ -4,27 +4,33 @@ authors = [
   {name = "James Brunt", email = "jbrunt@unm.edu"}
 ]
 name = "soh"
-requires-python = ">=3.11,<3.12"
 version = "2025.03.18"
+description = "PASTA+ and related services State of Health monitoring"
+requires-python = ">=3.11,<3.12"
 
 dependencies = [
-    "requests",
-    "daiquiri",
-    "paramiko",
-    "pendulum",
-    "pytest",
-    "psycopg2",
-    "asyncssh",
-    "aiodns",
-    "pytzdata",
-    "urllib3",
-    "cchardet",
-    "ldap3",
-    "sqlalchemy==1.4.46",
-    "cryptography",
-    "click",
-    "aiohttp"
+  "aiohttp",
+  "aiodns",
+  "asyncssh",
+  "click",
+  "cryptography",
+  "daiquiri",
+  "faust-cchardet",
+  "ldap3",
+  "paramiko",
+  "pendulum",
+  "psycopg2",
+  "pytest",
+  "pytzdata",
+  "requests",
+  "setuptools",
+  "sqlalchemy==1.4.46",
+  "urllib3",
+  "wheel",
 ]
+
+[project.scripts]
+health_check = "soh.health_check:main"
 
 [build-system]
 requires = ["setuptools", "wheel"]

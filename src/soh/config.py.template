@@ -77,7 +77,10 @@ class Config(object):
              'ezeml-d.edirepository.org',
              'tweeter.edirepository.org',
              'web-x.edirepository.org',
-             'nis.lternet.edu'],
+             'nis.lternet.edu'
+             'pasta.lternet.edu',
+             'pasta-s.lternet.edu',
+             'pasta-d.lternet.edu'],
         'APACHE_TOMCAT':
             [],
         'AUDIT':
@@ -93,9 +96,7 @@ class Config(object):
              'gmn.lternet.edu',
              'gmn-s.lternet.edu'],
         'JETTY':
-            ['pasta.lternet.edu',
-             'pasta-s.lternet.edu',
-             'pasta-d.lternet.edu'],
+            [],
         'LDAP':
             ['ldap.edirepository.org',
              'ldap2.edirepository.org',

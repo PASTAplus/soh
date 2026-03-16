@@ -1856,7 +1856,7 @@ packages:
 - pypi: ./
   name: soh
   version: 2026.3.15
-  sha256: 67ec18398e98a42674e2d772e1e13b001e455bb8d1a7fee1eef06c2430ee8152
+  sha256: 79736621224f9dd1d54ad68441820ededc516c5094ff6b47175ff582b03d69cf
   requires_python: '>=3.11'
 - conda: https://conda.anaconda.org/conda-forge/linux-64/sqlalchemy-1.4.54-py311h9ecbd09_0.conda
   sha256: c6de53484de4b9a915944067adaac6c30b7063617c005202aabd8c91462eed06

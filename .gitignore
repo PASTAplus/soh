@@ -113,4 +113,6 @@ ENV/
 config.py
 properties.py
 settings.py
-*.pkl
+*.pkl# pixi environments
+.pixi/*
+!.pixi/config.toml

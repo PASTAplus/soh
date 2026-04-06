@@ -23,7 +23,10 @@ logger = daiquiri.getLogger('apache.py: ' + __name__)
 
 
 async def is_down(host=None):
-    url = 'http://' + host
+    if host in ("ezeml-d.edirepository.org"):
+        url = 'http://' + host + '/eml/ping'
+    else:
+        url = 'http://' + host
     assert_is_down = True
     try:
         async with aiohttp.ClientSession() as session:

@@ -23,7 +23,7 @@ logger = daiquiri.getLogger('apache.py: ' + __name__)
 
 
 async def is_down(host=None):
-    if host in ("ezeml-d.edirepository.org"):
+    if host in ("ezeml-d.edirepository.org", "ezeml.edirepository.org"):
         url = 'http://' + host + '/eml/ping'
     else:
         url = 'http://' + host
